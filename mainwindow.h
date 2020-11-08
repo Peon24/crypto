@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QFileDialog>
 #include <QDir>
-#include "encrypt.h"
+#include "cryptograph.h"
 #include "backupmanager.h"
 #include "aes.h"
 #include <QBitArray>
@@ -28,7 +28,7 @@ private slots:
 
 private:
     BackUpManager backUpManager;
-    Encrypt encrypt;
+    Cryptograph cryptograph;
     Ui::MainWindow *ui;
 };
 #endif // MAINWINDOW_H

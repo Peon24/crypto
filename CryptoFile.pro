@@ -11,17 +11,17 @@ CONFIG += c++11
 SOURCES += \
     aes.cpp \
     backupmanager.cpp \
-    decrypt.cpp \
-    encrypt.cpp \
+    cryptograph.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    sha3.cpp
 
 HEADERS += \
     aes.h \
     backupmanager.h \
-    decrypt.h \
-    encrypt.h \
-    mainwindow.h
+    cryptograph.h \
+    mainwindow.h \
+    sha3.h
 
 FORMS += \
     mainwindow.ui

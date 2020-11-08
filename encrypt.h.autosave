@@ -4,22 +4,21 @@
 #include "aes.h"
 #include <cmath>
 
-class Cryptograph
+class Encrypt : public AES
 {
 public:
-    Cryptograph();
+    Encrypt();
 
 
-    void encryptFileAES(QByteArray& input , QByteArray& output  );
+    void encryptFile(QByteArray& input , QByteArray& output  );
     void setKey(QString key);
 
 
 
 private:
-   AES aes;
+  
    uint8_t key[16];
    QString path;
-
 
 };
 

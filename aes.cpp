@@ -1,7 +1,7 @@
 #include "aes.h"
 
 
- constexpr  uint8_t S_BOX [256] =
+constexpr  uint8_t S_BOX [256] =
 {
     0x63, 0x7C, 0x77, 0x7B, 0xF2, 0x6B, 0x6F, 0xC5, 0x30, 0x01, 0x67, 0x2B, 0xFE, 0xD7, 0xAB, 0x76,
     0xCA, 0x82, 0xC9, 0x7D, 0xFA, 0x59, 0x47, 0xF0, 0xAD, 0xD4, 0xA2, 0xAF, 0x9C, 0xA4, 0x72, 0xC0,
@@ -21,69 +21,136 @@
     0x8C, 0xA1, 0x89, 0x0D, 0xBF, 0xE6, 0x42, 0x68, 0x41, 0x99, 0x2D, 0x0F, 0xB0, 0x54, 0xBB, 0x16
 };
 
- constexpr uint8_t blockSize = 16;
+
+
+constexpr static uint8_t INV_S_BOX [256] =
+{
+    0x52, 0x09, 0x6A, 0xD5, 0x30, 0x36, 0xA5, 0x38, 0xBF, 0x40, 0xA3, 0x9E, 0x81, 0xF3, 0xD7, 0xFB,
+    0x7C, 0xE3, 0x39, 0x82, 0x9B, 0x2F, 0xFF, 0x87, 0x34, 0x8E, 0x43, 0x44, 0xC4, 0xDE, 0xE9, 0xCB,
+    0x54, 0x7B, 0x94, 0x32, 0xA6, 0xC2, 0x23, 0x3D, 0xEE, 0x4C, 0x95, 0x0B, 0x42, 0xFA, 0xC3, 0x4E,
+    0x08, 0x2E, 0xA1, 0x66, 0x28, 0xD9, 0x24, 0xB2, 0x76, 0x5B, 0xA2, 0x49, 0x6D, 0x8B, 0xD1, 0x25,
+    0x72, 0xF8, 0xF6, 0x64, 0x86, 0x68, 0x98, 0x16, 0xD4, 0xA4, 0x5C, 0xCC, 0x5D, 0x65, 0xB6, 0x92,
+    0x6C, 0x70, 0x48, 0x50, 0xFD, 0xED, 0xB9, 0xDA, 0x5E, 0x15, 0x46, 0x57, 0xA7, 0x8D, 0x9D, 0x84,
+    0x90, 0xD8, 0xAB, 0x00, 0x8C, 0xBC, 0xD3, 0x0A, 0xF7, 0xE4, 0x58, 0x05, 0xB8, 0xB3, 0x45, 0x06,
+    0xD0, 0x2C, 0x1E, 0x8F, 0xCA, 0x3F, 0x0F, 0x02, 0xC1, 0xAF, 0xBD, 0x03, 0x01, 0x13, 0x8A, 0x6B,
+    0x3A, 0x91, 0x11, 0x41, 0x4F, 0x67, 0xDC, 0xEA, 0x97, 0xF2, 0xCF, 0xCE, 0xF0, 0xB4, 0xE6, 0x73,
+    0x96, 0xAC, 0x74, 0x22, 0xE7, 0xAD, 0x35, 0x85, 0xE2, 0xF9, 0x37, 0xE8, 0x1C, 0x75, 0xDF, 0x6E,
+    0x47, 0xF1, 0x1A, 0x71, 0x1D, 0x29, 0xC5, 0x89, 0x6F, 0xB7, 0x62, 0x0E, 0xAA, 0x18, 0xBE, 0x1B,
+    0xFC, 0x56, 0x3E, 0x4B, 0xC6, 0xD2, 0x79, 0x20, 0x9A, 0xDB, 0xC0, 0xFE, 0x78, 0xCD, 0x5A, 0xF4,
+    0x1F, 0xDD, 0xA8, 0x33, 0x88, 0x07, 0xC7, 0x31, 0xB1, 0x12, 0x10, 0x59, 0x27, 0x80, 0xEC, 0x5F,
+    0x60, 0x51, 0x7F, 0xA9, 0x19, 0xB5, 0x4A, 0x0D, 0x2D, 0xE5, 0x7A, 0x9F, 0x93, 0xC9, 0x9C, 0xEF,
+    0xA0, 0xE0, 0x3B, 0x4D, 0xAE, 0x2A, 0xF5, 0xB0, 0xC8, 0xEB, 0xBB, 0x3C, 0x83, 0x53, 0x99, 0x61,
+    0x17, 0x2B, 0x04, 0x7E, 0xBA, 0x77, 0xD6, 0x26, 0xE1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0C, 0x7D
+};
+
+
+
 
 AES::AES()
 {
 
-}
-
-
-
-int AES::checkKey(QString key){
+   gen.seed(time(0)); // ошибка и костыль
 
 
 
 }
 
+void AES::setKey(QString key){
 
-void AES::encrypt( uint8_t state[4][4],  uint8_t *key, uint8_t *output)  {
+  //sha3
 
+}
 
-     static constexpr int ROUND_MAX = 10;
+QString AES::generateKey(){
 
-     int roundKeyIterator = 0;
+    //generate str
+    //sha3
+}
 
-
-//     uint8_t tes = state[2][2];
-//     uint8_t tes2 = state[0][1];
-//     uint8_t tes23 = state[0][2];
-//     uint8_t tes24 = state[0][3];
-
-
-
-//     uint8_t tesdf = state[3][3];
-//     uint8_t tesd2f = state[1][0];
-//     uint8_t tesd1f = state[2][0];
-//     uint8_t te1sdf = state[3][0];
+bool AES::checkKey(uint8_t key[]){
 
 
-//   //разбитый инпут, разбивать до передачи
-//    uint8_t state[4][4]=
-//    {   {input[0], input[4], input[8], input[12]},
-//        {input[1], input[5], input[9], input[13]},
-//        {input[2], input[6], input[10], input[14]},
-//        {input[3], input[7], input[11], input[15]}  };
+}
+
+void AES::newFile(){
+
+    generateInitialVec();
+
+
+    for (uint8_t i = 0; i < 4; i++)
+    {
+        for (uint8_t j = 0; j < 4; j++)
+        {
+            PrevState[i][j] = NULL;
+            inVec[i][j] = NULL;
+        }
+    }
+}
+
+void AES::StateXorPrevState(uint8_t state[4][4]){
+
+
+    for (uint8_t i = 0; i < 4; i++)
+            {
+                if(PrevState[i][0] != NULL){
+                uint32_t* statePrevPtr = (uint32_t*) PrevState[i];
+                uint32_t* statePtr = (uint32_t*)state[i];
+                *statePtr ^= *statePrevPtr;
+                } else{
+                    uint32_t* inVecPtr = (uint32_t*) inVec[i];
+                    uint32_t* statePtr = (uint32_t*)state[i];
+                    *statePtr ^= *inVecPtr;
+                }
+            }
+}
+
+void AES::generateInitialVec(){
+
+    std::default_random_engine generator;
+
+    std::uniform_int_distribution<int> lenghtRand(1, 6);
+
+    QString valueStr;
+
+
+    for(int j = 0; j < 4; j++){
+
+        for(int k = 0; k<4; k++){
+
+            int lenghtNum = lenghtRand(gen);
+            for(int i = 0; i <= lenghtNum; i++  ){
+
+                std::uniform_int_distribution<int> valueRand(0, 1);
+                valueStr += QString::number(valueRand(gen));
+            }
+
+
+            inVec[j][k] = valueStr.toUInt();
+        }
+    }
+
+}
+
+void AES::encrypt(uint8_t state[4][4], uint8_t output[] ){
+
+    //state - 1 block
+
+    StateXorPrevState(state);
 
 
     uint8_t wKey[EXPANDED_KEY_LENGTH];
-
     KeyExpansion(key ,wKey);
 
-
     uint8_t roundKey [4][4]=
-         {   {wKey[0], wKey[4], wKey[8], wKey[12]},
-             {wKey[1], wKey[5], wKey[9], wKey[13]},
-             {wKey[2], wKey[6], wKey[10], wKey[14]},
-             {wKey[3], wKey[7], wKey[11], wKey[15]}  }; // ошибка? я беру первые элементы ключа ИСПРАВИТЬ
-
-
+    {   {wKey[0], wKey[4], wKey[8], wKey[12]},
+        {wKey[1], wKey[5], wKey[9], wKey[13]},
+        {wKey[2], wKey[6], wKey[10], wKey[14]},
+        {wKey[3], wKey[7], wKey[11], wKey[15]}  };
 
     AddRoundKey(state,roundKey); //INITIAL ROUND
 
-
-
-    for(int round = 1 ;round <= ROUND_MAX; round++){  // 9 ROUNDS
+    int roundKeyIterator = 0;
+    for(int round = 1 ;round <= ROUND_MAX; round++){  // 10 ROUNDS
 
         for (uint8_t i = 0; i < 4; i++)
         {
@@ -94,12 +161,12 @@ void AES::encrypt( uint8_t state[4][4],  uint8_t *key, uint8_t *output)  {
             }
         }
 
-         roundKeyIterator += blockSize;
+        roundKeyIterator += blockSize;
         SubBytes(state);
         ShiftRows(state);
 
         if(round != ROUND_MAX){
-        MixColumn(state);
+            MixColumn(state);
         }
 
         AddRoundKey(state,roundKey);
@@ -109,18 +176,36 @@ void AES::encrypt( uint8_t state[4][4],  uint8_t *key, uint8_t *output)  {
 
 
 
+//        for (uint8_t i = 0; i < 4; i++)
+//        {
+//            for (uint8_t j = 0; j < 4; j++)
+//            {
+//                output[i][j] = state[i][j];
+
+//            }
+//        }
+
+    // Сохраняем этот стейт
     for (uint8_t i = 0; i < 4; i++)
+    {
+        for (uint8_t j = 0; j < 4; j++)
         {
-            for (uint8_t j = 0; j < 4; j++)
-            {
-                output[(j * 4) + i] = state[i][j];
-//                uint8_t test = state[i][j];
-//                 uint8_t test2 = state[i][j];
-            }
+            PrevState[i][j] = state[i][j];
+
         }
+    }
+
+
+    for (uint8_t i = 0; i < 4; i++)
+    {
+        for (uint8_t j = 0; j < 4; j++)
+        {
+            output[(j * 4) + i] = state[i][j];
+
+        }
+    }
+
 }
-
-
 
 void AES::KeyExpansion( const uint8_t key[] , uint8_t wKey[]) {
 
@@ -128,7 +213,6 @@ void AES::KeyExpansion( const uint8_t key[] , uint8_t wKey[]) {
 
     static constexpr uint8_t RCON [11] = {0x8d, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36};
 
-    //uint8_t keyIterator = INITIAL_KEY_LENGTH;
     int keyIterator = INITIAL_KEY_LENGTH;
 
     memset(wKey, 0, EXPANDED_KEY_LENGTH);
@@ -152,50 +236,34 @@ void AES::KeyExpansion( const uint8_t key[] , uint8_t wKey[]) {
 
             for(int j=0;j<4;j++){
 
-               if (column == 0){
+                if (column == 0){
                     if(j == 0 ){
 
-                      //  wKey[keyIterator + j + 1] = wKey[keyIterator - blockSize] ^ lastByte[j] ^ RCON[j];
+
                         wKey[keyIterator] = wKey[keyIterator - blockSize] ^ lastByte[j] ^ RCON[j];
-
-
-//                        uint8_t test234 = wKey[keyIterator ];
-//                        uint8_t test24321 =  wKey[keyIterator - blockSize ] ^ lastByte[j] ^ RCON[j];
-//                          uint8_t test2268 =  wKey[keyIterator - blockSize ] ^ lastByte[j] ^ null;
-                          keyIterator++;
+                        keyIterator++;
 
                     }
                     else {
 
-                      //  wKey[keyIterator + j + 1] = wKey[keyIterator - blockSize + j] ^ lastByte[j] ^ null;
                         wKey[keyIterator ] = wKey[keyIterator - blockSize] ^ lastByte[j] ^ null;
-
-
-//                        uint8_t tes56t = wKey[keyIterator];
-//                        uint8_t test256 =  wKey[keyIterator - blockSize ] ^ lastByte[j] ^ null;
-//                          uint8_t test22340 =  wKey[keyIterator - blockSize] ^ lastByte[j] ^ null;
-                           keyIterator++;
-
+                        keyIterator++;
 
                     }
                 }
-               else {
-                   // wKey[keyIterator + j + 1] = wKey[keyIterator - blockSize + column] ^ lastByte[j];
+                else {
+                    // wKey[keyIterator + j + 1] = wKey[keyIterator - blockSize + column] ^ lastByte[j];
                     wKey[keyIterator] = wKey[keyIterator - blockSize] ^ lastByte[j];
 
-
-//                    uint8_t test13f = wKey[keyIterator ];
-//                    uint8_t test2fs =  wKey[keyIterator - blockSize ] ^ lastByte[j];
-//                      uint8_t test22g =  wKey[keyIterator - blockSize + j] ^ lastByte[j] ^ null;
-                      keyIterator++;
-               }
+                    keyIterator++;
+                }
 
             }
 
             memcpy(lastByte, wKey + (keyIterator - 4), 4);
         } // конец колонн
 
-       // keyIterator += blockSize;
+
     } // конец раундов
 }
 
@@ -242,7 +310,7 @@ void AES::SubBytes(uint8_t key[4] )  {
     for (uint8_t i = 0; i < 4; i++)
     {
 
-            key[i] = S_BOX[key[i]];
+        key[i] = S_BOX[key[i]];
 
     }
 
@@ -262,8 +330,8 @@ void AES::MixColumn( uint8_t state[4][4])  {
         uint8_t col [4] = {state[0][i], state[1][i], state[2][i], state[3][i]};
 
         for(int j = 0;j<4;j++){
-        state[j][i] = (col[i] * GALOIS_TABLE[j][i]) ^ (col[i+1] * GALOIS_TABLE[j][i+1]) ^
-                      (col[i+1] * GALOIS_TABLE[j][i+1]) ^  (col[i+1] * GALOIS_TABLE[j][i+1]);
+            state[j][i] = (col[i] * GALOIS_TABLE[j][i]) ^ (col[i+1] * GALOIS_TABLE[j][i+1]) ^
+                    (col[i+1] * GALOIS_TABLE[j][i+1]) ^  (col[i+1] * GALOIS_TABLE[j][i+1]);
 
         }
 
@@ -272,11 +340,149 @@ void AES::MixColumn( uint8_t state[4][4])  {
 
 void AES::AddRoundKey(uint8_t state[4][4], uint8_t roundKey[4][4]) {
     for (int i = 0; i < 4; i++)
-           {
-               uint32_t* keyPtr = (uint32_t*) roundKey[i];
-               uint32_t* statePtr = (uint32_t*) state[i];
-               *statePtr ^= *keyPtr;
-           }
+    {
+        uint32_t* keyPtr = (uint32_t*) roundKey[i];
+        uint32_t* statePtr = (uint32_t*) state[i];
+        *statePtr ^= *keyPtr;
+    }
+}
+
+
+
+//░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+//░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+//████████░░░░░░████████░░░░░░░░░░
+//██░░░░░░██░░░░██░░░░░░░░░░░░░░░░
+//██░░░░░░██░░░░████████░░░░░░░░░░
+//██░░░░░░██░░░░██░░░░░░░░░░░░░░░░
+//██░░░░░░██░░░░██░░░░░░░░░░░░░░░░
+//██░░░░░░██░░░░██░░░░░░░░░░░░░░░░
+//██░░░░░░██░░░░██░░░░░░░░░░░░░░░░
+//██░░░░░░██░░░░██░░░░░░░░░░░░░░░░
+//████████░░░░░░████████░░░░░░░░░░
+//░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+//░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+//░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+//░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+//░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+
+
+
+void AES::decrypt(uint8_t (*state)[4], uint8_t *output){
+
+    int roundKeyIterator = 0;
+
+    uint8_t wKey[EXPANDED_KEY_LENGTH];
+
+    KeyExpansion(key ,wKey);
+
+
+    uint8_t roundKey [4][4]=
+    {   {wKey[EXPANDED_KEY_LENGTH - 16], wKey[EXPANDED_KEY_LENGTH - 12], wKey[EXPANDED_KEY_LENGTH - 8], wKey[EXPANDED_KEY_LENGTH - 4]},
+        {wKey[EXPANDED_KEY_LENGTH - 15], wKey[EXPANDED_KEY_LENGTH - 11], wKey[EXPANDED_KEY_LENGTH - 7], wKey[EXPANDED_KEY_LENGTH - 3]},
+        {wKey[EXPANDED_KEY_LENGTH - 14], wKey[EXPANDED_KEY_LENGTH - 10], wKey[EXPANDED_KEY_LENGTH - 6], wKey[EXPANDED_KEY_LENGTH - 2]},
+        {wKey[EXPANDED_KEY_LENGTH - 13], wKey[EXPANDED_KEY_LENGTH - 9], wKey[EXPANDED_KEY_LENGTH - 5],  wKey[EXPANDED_KEY_LENGTH - 1]}   };
+
+
+
+    AddRoundKey(state,roundKey); //INITIAL ROUND
+
+
+
+    for(int8_t roundCounter = (int8_t)(ROUND_MAX - 1); roundCounter >= 0; roundCounter--){  // 10 ROUNDS
+
+        for (uint8_t i = 0; i < 4; i++)
+        {
+            for (uint8_t j = 0; j < 4; j++)
+            {
+                //брать по 16 байт ??
+                roundKey[i][j] = wKey[(roundCounter * blockSize) + (j * 4) + i ];
+            }
+        }
+
+        roundKeyIterator += blockSize;
+        invSubBytes(state);
+        invShiftRows(state);
+
+        if(roundCounter != ROUND_MAX){
+            invMixColumn(state);
+        }
+
+        AddRoundKey(state,roundKey);
+
+
+    }
+
+
+
+    for (uint8_t i = 0; i < 4; i++)
+    {
+        for (uint8_t j = 0; j < 4; j++)
+        {
+            output[(j * 4) + i] = state[i][j];
+            //                uint8_t test = state[i][j];
+            //                 uint8_t test2 = state[i][j];
+        }
+    }
+
+
+}
+
+void AES::invSubBytes(uint8_t state[4][4])
+{
+    for (uint8_t i = 0; i < 4; i++)
+    {
+        for (uint8_t j = 0; j < 4; j++)
+        {
+            state[i][j] = INV_S_BOX[state[i][j]];
+        }
+    }
+}
+
+
+
+
+void AES::invShiftRows(uint8_t state[4][4])  {
+
+    for (uint8_t i = 0; i < 4; i++)
+    {
+        if (i > 0)
+        {
+            uint8_t row [4];
+            for (uint8_t j = 0; j < 4; j++)
+            {
+                row[j] = state[i][j];
+            }
+
+            for (int8_t j = 3; j >= 0; j--)
+            {
+                state[i][j] = row[(j + (4- i)) % 4];
+            }
+        }
+    }
+}
+
+
+void AES::invMixColumn( uint8_t state[4][4])  {
+
+    static constexpr uint8_t GALOIS_TABLE [4][4]=
+    {   {14, 11, 13, 9},
+        {9, 14, 11, 13},
+        {13, 9, 14, 11},
+        {11, 13, 9, 14}  };
+
+    for (int i = 0; i < 4; i++)   //S0 = (2 * S0) ^ (3 * S1) ^ (S2 * 1) ^ (S3 * 1)  example
+    {
+        uint8_t col [4] = {state[0][i], state[1][i], state[2][i], state[3][i]};
+
+        for(int j = 0;j<4;j++){
+            state[j][i] = (col[i] * GALOIS_TABLE[j][i]) ^ (col[i+1] * GALOIS_TABLE[j][i+1]) ^
+                    (col[i+1] * GALOIS_TABLE[j][i+1]) ^  (col[i+1] * GALOIS_TABLE[j][i+1]);
+
+        }
+
+    }
 }
 
 
