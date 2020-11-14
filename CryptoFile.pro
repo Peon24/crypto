@@ -3,6 +3,7 @@ QT       += core gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
+TARGET = Settings
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -12,19 +13,31 @@ SOURCES += \
     aes.cpp \
     backupmanager.cpp \
     cryptograph.cpp \
+    devicemanagement.cpp \
     main.cpp \
     mainwindow.cpp \
+    settings.cpp \
     sha3.cpp
 
 HEADERS += \
     aes.h \
     backupmanager.h \
     cryptograph.h \
+    devicemanagement.h \
     mainwindow.h \
+    settings.h \
     sha3.h
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    settings.ui
+
+win32 {
+
+LIBS += -lhid -lsetupapi
+
+}
+
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

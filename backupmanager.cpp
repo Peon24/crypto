@@ -8,26 +8,10 @@ BackUpManager::BackUpManager()
 
 bool BackUpManager::replaceFile(QString path, QByteArray &byteArray){
 
-
-
-    //QString typeDoc = path.right(path.findRev("/") + 1);
-
     QString docType;
     QString fullName;
 
-    //как жаль что я не знаю регулярки )))
-    for(int i = path.size()-2; i != 0;i--){
 
-        if(path[i] == "."){
-            docType = fullName;
-        }
-
-        if(path[i] == "/" ){
-            break;
-        }
-
-        fullName += path[i];
-    }
 
 
     QFile::remove(path);
@@ -42,18 +26,7 @@ bool BackUpManager::replaceFile(QString path, QByteArray &byteArray){
         file.write(byteArray);
     }
 
-    //вариант 2
-//    QFile file("outfile.dat");
-//    file.open(QIODevice::WriteOnly);
-//    QDataStream out(&file);
 
-//    Затем используйте
-
-//    QDataStream & QDataStream::writeBytes ( const char * s, uint len )
-
-//    или
-
-//    int QDataStream::writeRawData ( const char * s, int len )
 
 }
 
@@ -79,6 +52,9 @@ void BackUpManager::copyFilesRecursion(QString path , QString dst){
     QDir dir(path);
      if (! dir.exists())
          return void();
+
+
+
 
      foreach (QString d, dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot)) {
          QString dst_path = currentDir + QDir::separator() + d;

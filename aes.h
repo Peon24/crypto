@@ -17,10 +17,10 @@ public:
 
     AES();
 
-    void encrypt(uint8_t state[4][4],  uint8_t output[] );
+    void encrypt(uint8_t state[4][4],  uint8_t output[]);
     void decrypt( uint8_t state[4][4],  uint8_t output[]);
 
-    void newFile();
+    void newFile(uint8_t IV[16],bool encrypt);
 
     void setKey(QString key);
     QString generateKey();
@@ -29,7 +29,7 @@ public:
 
 private:
 
-    uint8_t inVec[4][4];
+
     uint8_t PrevState[4][4];
     SHA3 sha3;
 
@@ -47,8 +47,6 @@ private:
 
 
     void AddRoundKey(uint8_t state[4][4],uint8_t roundKey[4][4]);
-
-
 
     //методы шифрования
     void SubBytes (uint8_t state[4][4]);

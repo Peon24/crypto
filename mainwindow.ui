@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>364</width>
-    <height>186</height>
+    <width>366</width>
+    <height>196</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -86,7 +86,7 @@
      <string>Начать</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_3">
+   <widget class="QPushButton" name="pushButtonKeyGen">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -112,17 +112,17 @@
      <string>Rijndael (AES)</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="checkBoxCopyFile">
+   <widget class="QPushButton" name="pushButtonSettings">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>160</y>
-      <width>211</width>
-      <height>17</height>
+      <x>230</x>
+      <y>131</y>
+      <width>75</width>
+      <height>23</height>
      </rect>
     </property>
     <property name="text">
-     <string>Безопасное шифрование</string>
+     <string>Настройки</string>
     </property>
    </widget>
   </widget>

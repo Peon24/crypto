@@ -8,6 +8,10 @@
 #include "backupmanager.h"
 #include "aes.h"
 #include <QBitArray>
+#include <QTextStream>
+
+
+#include <settings.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -26,7 +30,13 @@ private slots:
 
     void on_pushButton_clicked();
 
+    void on_pushButtonKeyGen_clicked();
+
+    void on_pushButtonSettings_clicked();
+
 private:
+    Settings* settings;
+
     BackUpManager backUpManager;
     Cryptograph cryptograph;
     Ui::MainWindow *ui;
