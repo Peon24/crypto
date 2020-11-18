@@ -2,8 +2,7 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-CONFIG += c++11
-TARGET = Settings
+CONFIG += c++17
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -11,22 +10,22 @@ TARGET = Settings
 
 SOURCES += \
     aes.cpp \
-    backupmanager.cpp \
     cryptograph.cpp \
     devicemanagement.cpp \
+    filemanager.cpp \
     main.cpp \
     mainwindow.cpp \
-    settings.cpp \
-    sha3.cpp
+    memorymanager.cpp \
+    settings.cpp
 
 HEADERS += \
     aes.h \
-    backupmanager.h \
     cryptograph.h \
     devicemanagement.h \
+    filemanager.h \
     mainwindow.h \
-    settings.h \
-    sha3.h
+    memorymanager.h \
+    settings.h
 
 FORMS += \
     mainwindow.ui \
@@ -34,7 +33,7 @@ FORMS += \
 
 win32 {
 
-LIBS += -lhid -lsetupapi
+LIBS += -lhid -lsetupapi -lKernel32
 
 }
 
@@ -43,3 +42,5 @@ LIBS += -lhid -lsetupapi
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES +=

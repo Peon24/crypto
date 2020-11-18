@@ -6,9 +6,6 @@
 #include <string>
 
 
-
-
-
 class DeviceManagement
 {
 public:

@@ -7,12 +7,32 @@ Settings::Settings(QWidget *parent) :
 {
     ui->setupUi(this);
 
+
+   device = new DeviceManagement();
+
     QSettings settings(ORGANIZATION, APPL);
 }
 
 Settings::~Settings()
 {
+    delete device;
     delete ui;
+}
+
+QString Settings::getSerial(QString deviceType){
+
+    if (deviceType == "USB"){
+    if(ui->lineEditSerialUSB->text() != ""){
+        return ui->lineEditSerialUSB->text();
+       }
+    }
+
+
+    if(deviceType == "HDD"){
+        if(ui->lineEditSerialHDD->text() != ""){
+            return ui->lineEditSerialHDD->text();
+        }
+    }
 }
 
 void Settings::on_pushButtonSave_clicked()
@@ -42,10 +62,10 @@ void Settings::on_pushButtonCancel_clicked()
 void Settings::on_pushButtonAddIO_clicked()
 {   
 
-   ui->lineEditSerialUSB->setText(device.getSerialDevice("USB"));
+   ui->lineEditSerialUSB->setText(device->getSerialDevice("USB"));
 }
 
 void Settings::on_pushButtonAddIO_2_clicked()
 {
-     ui->lineEditSerialHDD->setText(device.getSerialDevice("SCSI"));
+     ui->lineEditSerialHDD->setText(device->getSerialDevice("SCSI"));
 }

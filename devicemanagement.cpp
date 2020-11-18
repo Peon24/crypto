@@ -8,11 +8,11 @@ DeviceManagement::DeviceManagement()
 
 }
 
-
+// здесь читаем из реестра, подключенный серийник флешки или жесткого диска
 QString DeviceManagement::getSerialDevice(QString deviceType){
 
 
-static constexpr int TOTALBYTES  = 300; //8192;
+static constexpr int TOTALBYTES  = 300;
 
 
 
@@ -22,10 +22,10 @@ static constexpr int TOTALBYTES  = 300; //8192;
 
     HKEY hKey;
     if(::RegOpenKeyEx(HKEY_LOCAL_MACHINE, pathLPCW, 0, KEY_QUERY_VALUE , &hKey) != ERROR_SUCCESS){
-        return "Error";
+        return "";
     }
 
-    //Read & save
+
     DWORD BufferSize = TOTALBYTES;
     DWORD cbData;
     DWORD dwRet;
@@ -56,7 +56,7 @@ static constexpr int TOTALBYTES  = 300; //8192;
             if(dwRet == ERROR_SUCCESS){
 
                 QString nameDevice;
-                for(int i =0;i< BufferSize;i++){
+                for(int i =0;i < BufferSize;i++){
                     if(data[i] != NULL)
                         nameDevice += data[i];
                 }
@@ -84,13 +84,13 @@ static constexpr int TOTALBYTES  = 300; //8192;
 
     }
 
-    //Close registry
+
     RegCloseKey(hKey);
-    return "Error";
+    return "";
 
 }
 
-
+//парсим имя устройства, получая серийник
 QString DeviceManagement::getSerialFromName(QString fullName){
 
     int pos = fullName.lastIndexOf(QChar('&'));
@@ -114,142 +114,4 @@ QString DeviceManagement::getSerialFromName(QString fullName){
 
 
 
-
-
-//HDEVINFO deviceInfoSet;
-//GUID *guidDev = (GUID*) &GUID_DEVCLASS_USB;
-//deviceInfoSet = SetupDiGetClassDevs(guidDev, NULL, NULL, DIGCF_PRESENT | DIGCF_PROFILE);
-//TCHAR buffer [4000];
-//int memberIndex = 0;
-
-//std::vector<QString> vec;
-//while (true)
-//        {
-//        SP_DEVINFO_DATA deviceInfoData;
-//        ZeroMemory(&deviceInfoData, sizeof(SP_DEVINFO_DATA));
-//        deviceInfoData.cbSize = sizeof(SP_DEVINFO_DATA);
-//        if (SetupDiEnumDeviceInfo(deviceInfoSet, memberIndex, &deviceInfoData) == FALSE)
-//                {
-//                if (GetLastError() == ERROR_NO_MORE_ITEMS)
-//                        {
-//                        break;
-//                        }
-//                }
-//        DWORD nSize=0 ;
-//        SetupDiGetDeviceInstanceId (deviceInfoSet, &deviceInfoData, buffer, sizeof(buffer), &nSize);
-//        buffer [nSize] ='\0';
-//        //_tprintf (_T("%s\n"), buffer);
-//        memberIndex++;
-//        //Label1->Caption=String(buffer);
-
-
-//if (deviceInfoSet)
-//        {
-
-//        SetupDiDestroyDeviceInfoList(deviceInfoSet);
-
-//        }
-
-//QString str = "";
-//for(int i = 0;i<10;i++){
-//    str += buffer[i];
-//}
-
-// vec.push_back(str);
-
-
-// }
-
-//vec.push_back("конец");
-
-
-
-
-
-
-
-
-
-//dfdfdfdfdddddddddddddddddddddddddddd
-
-
-//The serial number is the subkey under HKLM\SYSTEM\CCS\Enum\USB\Vid_xxxx&Pid_yyyy
-
-//аппаратный том
-//DWORD DeviceManagement::GetPhysicalDriveSerialNumber(UINT nDriveNumber IN, std::string strSerialNumber OUT)
-//{
-//    DWORD dwRet = NO_ERROR;
-//    //strSerialNumber.Empty();
-
-//    // Format physical drive path (may be '\\.\PhysicalDrive0', '\\.\PhysicalDrive1' and so on).
-//    QString strDrivePath = "\\\\.\\PhysicalDrive0";
-
-//    //strDrivePath.Format(("\\\\.\\PhysicalDrive%u"), nDriveNumber);
-
-//    // Get a handle to physical drive
-//    HANDLE hDevice = nullptr;
-//    LPCWSTR strDrivePathWSTR = (const wchar_t*) strDrivePath.utf16();
-
-//    //открываем физический диск
-//    hDevice = CreateFile(strDrivePathWSTR, 0, FILE_SHARE_READ|FILE_SHARE_WRITE,
-//                                  NULL, OPEN_EXISTING, 0, NULL);
-
-//    if(INVALID_HANDLE_VALUE == hDevice)
-//        return ::GetLastError();
-
-//    // Set the input data structure
-//    STORAGE_PROPERTY_QUERY storagePropertyQuery;
-//   // заполняет блок памяти нулями.
-//    ZeroMemory(&storagePropertyQuery, sizeof(STORAGE_PROPERTY_QUERY));
-//    storagePropertyQuery.PropertyId = StorageDeviceProperty;
-//    storagePropertyQuery.QueryType = PropertyStandardQuery;
-
-//    // Get the necessary output buffer size
-//    STORAGE_DESCRIPTOR_HEADER storageDescriptorHeader = {0};
-//    DWORD dwBytesReturned = 0;
-//    if(! ::DeviceIoControl(hDevice, IOCTL_STORAGE_QUERY_PROPERTY,
-//                           &storagePropertyQuery, sizeof(STORAGE_PROPERTY_QUERY),
-//                           &storageDescriptorHeader, sizeof(STORAGE_DESCRIPTOR_HEADER),
-//                           &dwBytesReturned, NULL))
-//    {
-//        dwRet = ::GetLastError();
-//        ::CloseHandle(hDevice);
-//        return dwRet;
-//    }
-
-//    // Выделить выходной буфер
-//    const DWORD dwOutBufferSize = storageDescriptorHeader.Size;
-//    BYTE* pOutBuffer = new BYTE[dwOutBufferSize];
-//    ZeroMemory(pOutBuffer, dwOutBufferSize);
-
-//    // Получить дескриптор устройства хранения
-//    if(! ::DeviceIoControl(hDevice, IOCTL_STORAGE_QUERY_PROPERTY,
-//                           &storagePropertyQuery, sizeof(STORAGE_PROPERTY_QUERY),
-//                           pOutBuffer, dwOutBufferSize,
-//                           &dwBytesReturned, NULL))
-//    {
-//        dwRet = ::GetLastError();
-//        delete []pOutBuffer;
-//        ::CloseHandle(hDevice);
-//        return dwRet;
-//    }
-
-//    // Теперь выходной буфер указывает на структуру STORAGE_DEVICE_DESCRIPTOR
-//    // следует дополнительная информация, такая как идентификатор поставщика, идентификатор продукта, серийный номер и т. д.
-//    STORAGE_DEVICE_DESCRIPTOR* pDeviceDescriptor = (STORAGE_DEVICE_DESCRIPTOR*)pOutBuffer;
-//    const DWORD dwSerialNumberOffset = pDeviceDescriptor->SerialNumberOffset;
-//    if(dwSerialNumberOffset != 0)
-//    {
-//        // Finally, get the serial number
-
-//     auto strSerialNumber1 = pOutBuffer + dwSerialNumberOffset;
-
-
-//    }
-
-
-//    delete []pOutBuffer;
-//    ::CloseHandle(hDevice);
-//    return dwRet;
-//}
 

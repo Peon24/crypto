@@ -4,7 +4,6 @@
 #include <QDialog>
 #include <devicemanagement.h>
 #include <QSettings>
-//#include <mainwindow.h>
 
 namespace Ui {
 class settings;
@@ -15,6 +14,8 @@ class Settings : public QDialog
     Q_OBJECT
 
 public:
+    QString getSerial(QString deviceType);
+
 
     static inline const QString ORGANIZATION = "CryptoCorp";
     static inline const QString DOMAIN_APPL = "Crypto";
@@ -39,7 +40,7 @@ private:
      static inline const QString SETTINGS_ALL_CHECK = "settings/all_check";
      static inline const QString SETTINGS_ALL_IV = "settings/all_iv";
 
-    DeviceManagement device;
+    DeviceManagement* device;
     Ui::settings *ui;
 };
 

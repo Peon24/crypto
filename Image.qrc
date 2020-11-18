@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/icon">
+        <file>ICON_CRYPTO.png</file>
+    </qresource>
+    <qresource prefix="/gif">
+        <file>WTF_GIF.gif</file>
+    </qresource>
+</RCC>

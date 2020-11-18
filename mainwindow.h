@@ -5,10 +5,11 @@
 #include <QFileDialog>
 #include <QDir>
 #include "cryptograph.h"
-#include "backupmanager.h"
+#include "filemanager.h"
 #include "aes.h"
 #include <QBitArray>
 #include <QTextStream>
+
 
 
 #include <settings.h>
@@ -37,8 +38,8 @@ private slots:
 private:
     Settings* settings;
 
-    BackUpManager backUpManager;
-    Cryptograph cryptograph;
+    FileManager *fileManager;
+    Cryptograph* cryptograph;
     Ui::MainWindow *ui;
 };
 #endif // MAINWINDOW_H

@@ -1,12 +1,13 @@
 #ifndef AES_H
 #define AES_H
 #include <string>
-#include <cstring>
-#include <sha3.h>
 #include <iostream>
 #include <QString>
 #include <random>
 #include <ctime>
+#include "memorymanager.h"
+//#include <memoryapi.h>
+
 
 constexpr uint8_t blockSize = 16;
 
@@ -15,37 +16,55 @@ class AES
 
 public:
 
-    AES();
+    explicit AES();
+
+    ~AES();
 
     void encrypt(uint8_t state[4][4],  uint8_t output[]);
     void decrypt( uint8_t state[4][4],  uint8_t output[]);
 
     void newFile(uint8_t IV[16],bool encrypt);
 
-    void setKey(QString key);
+
+
+    //QMap<uint8_t*,size_t>&
+     void  getPointersToLock(QMap<uint8_t*,size_t>& ptrsForLock);
+
+    bool setKey(QByteArray &key);
+    void convertAndSetIV(QByteArray &IV);
+
     QString generateKey();
+
+    static constexpr int EXPANDED_KEY_LENGTH = 176;
+    static constexpr int INITIAL_KEY_LENGTH = 16;
 
 
 
 private:
 
+    QMap<uint8_t*,size_t> m_ptrsForLock;
 
-    uint8_t PrevState[4][4];
-    SHA3 sha3;
 
-    static constexpr int EXPANDED_KEY_LENGTH = 176;
-    static constexpr int INITIAL_KEY_LENGTH = 16;
+    bool convertToKeyUInt8(QByteArray &input);
+
+
+    static bool checkKey(QString &key);
+
     static constexpr int ROUND_MAX = 10;
 
-    uint8_t key[INITIAL_KEY_LENGTH];
-    std::mt19937 gen;
+    uint8_t m_key[INITIAL_KEY_LENGTH] ;
+    uint8_t m_wKey[EXPANDED_KEY_LENGTH];
+    uint8_t m_prevState[4][4];
+    uint8_t m_roundKey[4][4];
 
-    bool checkKey(uint8_t key[]);
+
+    std::mt19937 m_gen;
+
 
     void generateInitialVec();
     void StateXorPrevState(uint8_t state[4][4]);
 
-
+    void KeyExpansion() ;
     void AddRoundKey(uint8_t state[4][4],uint8_t roundKey[4][4]);
 
     //методы шифрования
@@ -63,8 +82,7 @@ private:
 
 
 
-    void KeyExpansion( const uint8_t key[] , uint8_t wKey[]);
-    //void SubBytes (uint8_t* keyColumn[]);
+
 };
 
 #endif // AES_H

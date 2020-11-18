@@ -5,24 +5,26 @@
 #include <QDir>
 #include <vector>
 
-class BackUpManager
+class FileManager
 {
 public:
-    BackUpManager();
+    FileManager();
 
-    int copyFilesDir(QString path , bool needCopyFiles = false);
+    void copyFilesDir(QString path , bool needCopyFiles = false);
     bool checkFiles();
-    bool replaceFile(QString path , QByteArray& byteArray );
+    void replaceFile(QString path , QByteArray& byteArray);
+
 
 
     int backupFolder();
 
 
-    std::vector<QString> filesDir;
+    std::vector<QString> m_filesDir;
 
 private:
     void copyFilesRecursion(QString path,QString dst = "");
-    bool rezervFiles;
+    bool m_rezervFiles;
+    int totalSize;
 };
 
 #endif // BACKUPMANAGER_H

@@ -99,19 +99,6 @@
      <string>Сгенерировать ключ</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>280</x>
-      <y>160</y>
-      <width>81</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Rijndael (AES)</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="pushButtonSettings">
     <property name="geometry">
      <rect>

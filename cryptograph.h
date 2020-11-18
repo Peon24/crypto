@@ -2,31 +2,33 @@
 #define ENCRYPT_H
 #include <QString>
 #include "aes.h"
+#include "memorymanager.h"
 #include <cmath>
+
 
 #include <QFile>
 #include <QByteArray>
 #include <QDir>
 
 
+
 class Cryptograph
 {
 public:
-    Cryptograph();
+    explicit Cryptograph( QByteArray &key , QByteArray &IV,QString encryptionType = "AES");
+    Cryptograph() = delete;
+   ~Cryptograph();
 
+    void encryptFileAES(QByteArray& input,QByteArray& output ,bool isNewFile = false);
+    void decryptFileAES(QByteArray& input,QByteArray& output ,bool isNewFile = false);
 
-    void encryptFileAES(QByteArray& input , QByteArray& output ,  bool isNewFile = false );
-    void decryptFileAES(QByteArray& input , QByteArray& output ,  bool isNewFile = false);
-    void setKey(QString key);
     QString keyGen();
 
 
-
 private:
-   AES aes;
-  // uint8_t key[16];
+   AES *aes;
+   MemoryManager *memoryManager;
    QString path;
-
 
 };
 
