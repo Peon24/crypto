@@ -5,14 +5,12 @@
 #include <QFileDialog>
 #include <QDir>
 #include "cryptograph.h"
-#include "filemanager.h"
-#include "aes.h"
-#include <QBitArray>
-#include <QTextStream>
-
-
+#include <queue>
+#include <stack>
+#include <future>
 
 #include <settings.h>
+#include <log.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -35,11 +33,13 @@ private slots:
 
     void on_pushButtonSettings_clicked();
 
+    void on_lineKey_textEdited(const QString &arg1);
+
 private:
     Settings* settings;
+     Log *log;
 
-    FileManager *fileManager;
-    Cryptograph* cryptograph;
+    //Cryptograph* cryptograph;
     Ui::MainWindow *ui;
 };
 #endif // MAINWINDOW_H

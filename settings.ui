@@ -11,19 +11,19 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Настройки</string>
   </property>
   <widget class="QCheckBox" name="checkBoxCopyFile">
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>140</y>
+     <y>190</y>
      <width>201</width>
      <height>20</height>
     </rect>
    </property>
    <property name="text">
-    <string>Безопасное шифрование</string>
+    <string>Шифрование с бэкапом</string>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButtonAddIO">
@@ -71,19 +71,6 @@
     <string>Серийный номер</string>
    </property>
   </widget>
-  <widget class="QCheckBox" name="checkBoxCopyFile_2">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>200</y>
-     <width>201</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Шифрование всех файлов одним IV</string>
-   </property>
-  </widget>
   <widget class="QPushButton" name="pushButtonSave">
    <property name="geometry">
     <rect>
@@ -114,7 +101,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>170</y>
+     <y>220</y>
      <width>321</width>
      <height>20</height>
     </rect>
@@ -179,19 +166,6 @@
    </property>
    <property name="text">
     <string>AES 128bit CBC </string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="MOVIE">
-   <property name="geometry">
-    <rect>
-     <x>240</x>
-     <y>140</y>
-     <width>131</width>
-     <height>111</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string/>
    </property>
   </widget>
  </widget>

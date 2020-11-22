@@ -3,7 +3,8 @@
 #include <QString>
 #include <QFile>
 #include <QDir>
-#include <vector>
+#include <QMap>
+
 
 class FileManager
 {
@@ -12,19 +13,21 @@ public:
 
     void copyFilesDir(QString path , bool needCopyFiles = false);
     bool checkFiles();
-    void replaceFile(QString path , QByteArray& byteArray);
-
+   static void replaceFile(QString path , QByteArray& byteArray);
 
 
     int backupFolder();
 
 
-    std::vector<QString> m_filesDir;
+    QMap<QString, size_t> m_filesDir;
+
 
 private:
+    static constexpr size_t GB = 1073741824;
+
     void copyFilesRecursion(QString path,QString dst = "");
     bool m_rezervFiles;
-    int totalSize;
+    quint64 totalSize;
 };
 
 #endif // BACKUPMANAGER_H

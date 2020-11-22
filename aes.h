@@ -6,7 +6,7 @@
 #include <random>
 #include <ctime>
 #include "memorymanager.h"
-//#include <memoryapi.h>
+
 
 
 constexpr uint8_t blockSize = 16;
@@ -18,7 +18,7 @@ public:
 
     explicit AES();
 
-    ~AES();
+    ~AES() = default;
 
     void encrypt(uint8_t state[4][4],  uint8_t output[]);
     void decrypt( uint8_t state[4][4],  uint8_t output[]);
@@ -27,28 +27,23 @@ public:
 
 
 
-    //QMap<uint8_t*,size_t>&
-     void  getPointersToLock(QMap<uint8_t*,size_t>& ptrsForLock);
-
     bool setKey(QByteArray &key);
+    static int checkKey( const QString &key);
+    QString generateKey();
     void convertAndSetIV(QByteArray &IV);
 
-    QString generateKey();
+
+    void  getPointersToLock(QMap<uint8_t*,size_t>& ptrsForLock);
+
 
     static constexpr int EXPANDED_KEY_LENGTH = 176;
     static constexpr int INITIAL_KEY_LENGTH = 16;
-
-
 
 private:
 
     QMap<uint8_t*,size_t> m_ptrsForLock;
 
-
     bool convertToKeyUInt8(QByteArray &input);
-
-
-    static bool checkKey(QString &key);
 
     static constexpr int ROUND_MAX = 10;
 
@@ -57,6 +52,8 @@ private:
     uint8_t m_prevState[4][4];
     uint8_t m_roundKey[4][4];
 
+
+    uint8_t buffer[4][4];
 
     std::mt19937 m_gen;
 
@@ -79,8 +76,6 @@ private:
     void invSubBytes (uint8_t keyColumn[4]);
     void invShiftRows(uint8_t state[4][4]);
     void invMixColumn(uint8_t state[4][4]);
-
-
 
 
 };

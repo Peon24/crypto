@@ -21,7 +21,7 @@ QMap<uint8_t*,size_t>& MemoryManager::getLockPtrs(){
 
 void MemoryManager::lockMemory(uint8_t *beginMemory, SIZE_T size){
 
-   WINAPI::VirtualLock(beginMemory,size);
+   WINAPI::VirtualLock(beginMemory,size); //протестировать
 
    m_lockPtrs.insert(beginMemory,size);
 

@@ -1,22 +1,20 @@
 #include "cryptograph.h"
 
+
 Cryptograph::Cryptograph(QByteArray &key , QByteArray &IV , QString encryptionType)
 {
 
-    memoryManager = new MemoryManager();
-
 
     if(encryptionType == "AES"){
-        aes = new AES();
 
-        if(aes->setKey(key)){
+        if(aes.setKey(key)){
 
-         if(IV.size() > 0){
-             aes->convertAndSetIV(IV);
-         }
+            if(IV.size() > 0){
+                aes.convertAndSetIV(IV);
+            }
 
-         aes->getPointersToLock(memoryManager->getLockPtrs());
-         memoryManager->lockAll();
+            aes.getPointersToLock(memoryManager.getLockPtrs());
+            memoryManager.lockAll();
 
 
         }
@@ -27,43 +25,118 @@ Cryptograph::Cryptograph(QByteArray &key , QByteArray &IV , QString encryptionTy
 
 Cryptograph::~Cryptograph()
 {
-    delete memoryManager;
-
-    if(aes){
-      delete aes;
-    }
 
 }
 
 
+int Cryptograph::checkKey( const QString &key){
+   return AES::checkKey(key);
+}
+
+
+int Cryptograph::start(QString path, bool encrypt, size_t sizeFile , bool needIV){
+
+
+    QFile file(path);
+
+    if(!file.open(QIODevice::ReadWrite)){
+        //создать лог и сунуть  ошибку
+        return 1;
+    }
+
+
+    bool isNewFile = true;
+
+    QByteArray output;
+
+
+    while(!file.atEnd()){
+
+        QByteArray byteArray;
+
+        byteArray = file.read(16000000); //16 mb
+
+
+        if(encrypt){
+
+            if(!needIV){ // если есть вектор , то не нужно записывать и генерировать , для шифрования
+                isNewFile = !isNewFile;
+            }
+
+             encryptFileAES(byteArray,output,isNewFile);
+
+             if(file.atEnd()) {
+                 writeNeedDelete(output,sizeFile);
+             }
+
+
+            isNewFile = !isNewFile;
+        }
+        else {
+
+            decryptFileAES(byteArray,output,isNewFile);
+
+            isNewFile = !isNewFile;
+
+        }
+
+    }
+
+
+    file.resize(0);
+
+    file.write(output);
+
+    file.close();
+
+    return 0;
+
+    // FileManager::replaceFile(path , output );
+
+}
+
+
+
+
+void Cryptograph::writeNeedDelete(QByteArray& input , size_t size){
+
+
+    uint8_t countDeleteNull = size % blockSize;
+
+    if(countDeleteNull > 0)
+      input.append( countDeleteNull);
+
+}
 
 QString Cryptograph::keyGen(){
 
-    return aes->generateKey();
+    return aes.generateKey();
 }
 
 
-//нихера не модульное программирование , исправить
+
 void Cryptograph::encryptFileAES(QByteArray& input , QByteArray& output , bool isNewFile ){
 
-    //рзделяем на блоки
-    int counterState = std::ceil(input.size() / 16);
+    //делим на блоки
+
+    int counterState = std::ceil((float)input.size() / 16);
     int inputIterator = 0;
+
 
     uint8_t encryptedState[blockSize] = { 0 };
 
     if(isNewFile){
-        aes->newFile(encryptedState,true);
+        aes.newFile(encryptedState,true);
 
         for(int j = 0; j < 16; j++ ){
-            output.append(static_cast<qint8>(encryptedState[j]));
+            output.append(encryptedState[j]);
         }
 
     }
 
 
 
-    for (int i = 1; i <= counterState; ++i) {
+    for (int i = 1; i <= counterState; i++) {
 
         uint8_t state[4][4];
 
@@ -76,9 +149,9 @@ void Cryptograph::encryptFileAES(QByteArray& input , QByteArray& output , bool i
                     state[j][k] = input.at(inputIterator);
                     inputIterator++;
                 } else{
-                    state[j][k] = 0;
-                    // здесь нужно добавить что то в блок  , чтобы стало ровно 16 байт
-                    break;
+
+                    state[j][k] = 0; // здесь нужно добавить что то в блок  , чтобы стало ровно 16 байт
+
                 }
 
             }
@@ -87,7 +160,7 @@ void Cryptograph::encryptFileAES(QByteArray& input , QByteArray& output , bool i
 
         std::fill(encryptedState, encryptedState + 16, 0);
 
-        aes->encrypt(state,encryptedState );
+        aes.encrypt(state,encryptedState );
 
 
         for(int j = 0; j < 16; j++ ){
@@ -105,11 +178,13 @@ void Cryptograph::encryptFileAES(QByteArray& input , QByteArray& output , bool i
 
 void Cryptograph::decryptFileAES(QByteArray &input, QByteArray &output, bool isNewFile){
     //рзделяем на блоки
-    int counterState = std::ceil(input.size() / blockSize);
+    int counterState = std::ceil((float)(input.size()-1) / blockSize);
     int inputIterator = 0;
 
 
     uint8_t encryptedState[blockSize] = { 0 };
+
+    uint8_t deleteLastNull = input.at(input.size()-1);
 
     if(isNewFile){ // не брать IV , если флешка
 
@@ -130,13 +205,12 @@ void Cryptograph::decryptFileAES(QByteArray &input, QByteArray &output, bool isN
             }
         }
 
-
-        aes->newFile(IV,false); //добавляем в АЕС вектор инициализации
+        aes.newFile(IV,false); //добавляем в АЕС вектор инициализации
 
         counterState--;
     }
 
-    for (int i = 1; i <= counterState; ++i) {
+    for (int i = 1; i <= counterState; i++) {
 
         uint8_t state[4][4];
 
@@ -144,7 +218,7 @@ void Cryptograph::decryptFileAES(QByteArray &input, QByteArray &output, bool isN
         {
             for (uint8_t j = 0; j < 4; j++)
             {
-                if(inputIterator < input.size()){
+                if(inputIterator < input.size() - 1 ){ // - deleteLastNull
 
                     state[j][k] = input.at(inputIterator);
 
@@ -159,13 +233,25 @@ void Cryptograph::decryptFileAES(QByteArray &input, QByteArray &output, bool isN
 
         std::fill(encryptedState, encryptedState + blockSize, 0);
 
-        aes->decrypt(state,encryptedState );
+        aes.decrypt(state,encryptedState );
 
-        for(int j = 0; j < 16; j++ ){
+        if(i!= counterState){
+            for(int j = 0; j < 16; j++ ){
 
-            output.append(encryptedState[j]);
+                output.append(encryptedState[j]);
+
+            }
+        } else{
+
+            for(int j = 0; j < (16 - deleteLastNull); j++ ){
+
+                output.append(encryptedState[j]);
+
+            }
 
         }
+
+
 
     }
 }

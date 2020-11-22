@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/gifs">
+        <file>resent.gif</file>
+        <file>links-legs-kicking.gif</file>
+    </qresource>
+    <qresource prefix="/png">
+        <file>5.png</file>
+        <file>ICON_CRYPTO.png</file>
+    </qresource>
+</RCC>

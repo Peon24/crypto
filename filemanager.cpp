@@ -6,6 +6,37 @@ FileManager::FileManager()
 }
 
 
+
+//bool FileManager::needThread(size_t size){
+
+
+//    if(size <= GB / 6){
+//        return false;
+//    } else{
+//        return true;
+//    }
+
+
+
+//    QMap<QString, uint>::const_iterator it = m_filesDir.constBegin();
+
+//    while (it != m_filesDir.constEnd()) {
+
+//     QString path  = it.key();
+//     size_t size = it.value() ;
+
+//     float percent = size / totalSize * 100 ;
+
+
+
+//    }
+
+
+
+
+//}
+
+
 void FileManager::replaceFile(QString path, QByteArray &byteArray){
 
     QString docType;
@@ -18,7 +49,10 @@ void FileManager::replaceFile(QString path, QByteArray &byteArray){
     // создать новый файл
     QFile file(path);
 
+
+
     if(file.open(QIODevice::WriteOnly)){
+
         file.write(byteArray);
     }
 
@@ -56,14 +90,6 @@ void FileManager::copyFilesRecursion(QString path , QString dst){
         copyFilesRecursion(path+ QDir::separator() + d, dst_path);
     }
 
-    //     foreach (QString f, dir.entryList(QDir::Files)) {
-
-    //        if (m_rezervFiles){
-    //          QFile::copy(path + QDir::separator() + f, dst + QDir::separator() + f);
-    //         }
-    //         m_filesDir.push_back(path + QDir::separator() + f );
-
-    //     }
     QFileInfoList folderitems( dir.entryInfoList() );
 
     foreach ( QFileInfo i, folderitems ) {
@@ -76,7 +102,7 @@ void FileManager::copyFilesRecursion(QString path , QString dst){
             QFile::copy(path + QDir::separator() + i.fileName(), dst + QDir::separator() + i.fileName());
         }
         if(i.isFile()){
-        m_filesDir.push_back(path + QDir::separator() + i.fileName() );
+         m_filesDir.insert(path + QDir::separator() + i.fileName(),i.size()  );
         }
 
         totalSize += i.size();

@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <devicemanagement.h>
 #include <QSettings>
+#include <QMessageBox>
 
 namespace Ui {
 class settings;

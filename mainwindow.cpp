@@ -10,12 +10,14 @@ MainWindow::MainWindow(QWidget *parent)
 
     setWindowTitle("CryptoFile");
 
-    setWindowIcon(QIcon(":/icon/ICON_CRYPTO.png"));
+    setWindowIcon(QIcon(":/png/ICON_CRYPTO.png"));
 
     ui->lineDir->setText("C:/Users/FASOL/Desktop/Adobe LC 11/тесттекст");
     ui->lineKey->setText("BETOFKEY2020");
 
     settings = new Settings(this);
+
+    log = new Log(this);
 
 
 }
@@ -24,6 +26,7 @@ MainWindow::~MainWindow()
 {
     ui->lineKey->setText("XXXXXXXXXXXXXXXXXX");
     delete settings;
+    delete log;
     delete ui;
 }
 
@@ -32,73 +35,79 @@ void MainWindow::on_pushButton_2_clicked()
 
 {
 
-    bool copyfile = true;// настройки
-
-    fileManager = new FileManager();
-    fileManager->copyFilesDir(ui->lineDir->text() ,copyfile ); // копия файлов , не архив
-
+    log->startMovie();
 
     QByteArray key = ui->lineKey->text().toUtf8();
 
-    QByteArray IV = settings->getSerial("USB").toUtf8();
-    IV += settings->getSerial("HDD").toUtf8();
-
-
-    std::unique_ptr<Cryptograph> cryptograph(new Cryptograph(key,IV));
-    ui->lineKey->setText("");
-
-
-
-    if(cryptograph){
-
-
-
-        foreach ( const QString path , fileManager->m_filesDir){
-
-            QFile file(path);
-
-            if(!file.open(QIODevice::ReadOnly)){
-                //создать лог и сунуть  ошибку
-                continue;
-            }
-
-            QByteArray outputByteArray;
-            bool isNewFile = true;
-
-
-            while(!file.atEnd()){
-                QByteArray byteArray;
-                byteArray = file.read(104857600); // 100mb
-
-
-                if(ui->comboBox->currentIndex() == 0){
-
-
-                    if(IV.size() > 0){ // если есть вектор , то не нужно записывать и генерировать , для шифрования
-                        isNewFile = !isNewFile;
-                    }
-
-                    cryptograph->encryptFileAES(byteArray,outputByteArray,isNewFile);
-                    isNewFile = !isNewFile;
-                }
-                else {
-
-                    cryptograph->decryptFileAES(byteArray,outputByteArray,isNewFile);
-                    isNewFile = !isNewFile;
-
-                }
-
-            }
-
-
-            file.close();
-
-
-            fileManager->replaceFile(path , outputByteArray );
-
+    QByteArray IV;
+        if(settings->getSerial("USB") != ""){
+         IV = settings->getSerial("USB").toUtf8();
         }
 
+        if(settings->getSerial("HDD") != ""){
+        IV += settings->getSerial("HDD").toUtf8();
+        }
+
+
+
+    bool needIV;
+    if(IV.size() ==  0){
+        needIV = true;
     }
+
+
+    bool encrypt;
+    if(ui->comboBox->currentIndex() == 0){
+        encrypt = true;
+    } else{
+        encrypt = false;
+    }
+
+    std::unique_ptr<FileManager> fileManager(new FileManager());
+
+    bool copyfile = true;// настройки
+    fileManager->copyFilesDir(ui->lineDir->text() ,copyfile ); // копия файлов , не архив
+
+
+    //QQueue , QStack - очень сильно не любят умные указатели
+    std::queue<std::future<int>> queueTask;
+    std::stack<std::unique_ptr<Cryptograph>> stackCrypt;
+
+    QMap<QString, size_t>::const_iterator itPath = fileManager->m_filesDir.constBegin();
+    while (itPath != fileManager->m_filesDir.constEnd()) {
+
+        QString path = itPath.key();
+        size_t  size = itPath.value();
+
+        stackCrypt.push(std::make_unique<Cryptograph>(key,IV));
+        queueTask.push(std::async(std::launch::async,&Cryptograph::start,std::move(stackCrypt.top()),path,encrypt,size ,needIV));
+
+
+        itPath++;
+
+    }
+
+    //получим статус шифрования каждого файла
+            while(!queueTask.empty()){
+                auto &task = queueTask.front();
+                bool status = task.get();
+                queueTask.pop();
+            }
+
+
+            log->stopMovie();
+            if(encrypt){
+            ui->status->setText("Зашифровано");
+            } else {
+            ui->status->setText("Дешифровано");
+            }
+
+    //1)генерация ключа
+    //2)проверка корректность шифровки\дешифровки , проблема миссклика
+    //3)БАГ c CBC
+    //4)логирование
+    //5)настройки
+    //6)графика
 }
 
 void MainWindow::on_pushButton_clicked()
@@ -115,7 +124,7 @@ void MainWindow::on_pushButton_clicked()
 
 void MainWindow::on_pushButtonKeyGen_clicked()
 {
-    ui->lineKey->setText(cryptograph->keyGen());
+    // ui->lineKey->setText(keyGen());
 }
 
 void MainWindow::on_pushButtonSettings_clicked()
@@ -123,3 +132,50 @@ void MainWindow::on_pushButtonSettings_clicked()
 
     settings->show();
 }
+
+void MainWindow::on_lineKey_textEdited(const QString &arg1)
+{
+   int status = Cryptograph::checkKey(arg1);
+
+
+   switch (status)
+   {
+      case 0:
+          ui->keyCheck->setText("");
+       break;
+      case 1:
+         ui->keyCheck->setText("Слкишком короткий ключ");
+         break;
+      case 2:
+          ui->keyCheck->setText("Требуется вернхний регистр");
+          break;
+      case 3:
+          ui->keyCheck->setText("Требуется цифра");
+          break;
+      case 4:
+        ui->keyCheck->setText("Требуется нижний регистр");
+        break;
+
+
+   }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
