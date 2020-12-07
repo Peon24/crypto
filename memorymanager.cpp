@@ -37,7 +37,6 @@ void MemoryManager::lockAll() {
      uint8_t* beginMemory = it.key();
      size_t sizeBlock = it.value() ;
 
-
      lockMemory(beginMemory,sizeBlock);
 
      ++it;
@@ -48,7 +47,6 @@ void MemoryManager::lockAll() {
 
 
 void MemoryManager::clearAll(){
-
 
     QMap<uint8_t*, size_t>::const_iterator it = m_lockPtrs.constBegin();
 
@@ -64,6 +62,9 @@ void MemoryManager::clearAll(){
     }
 
 }
+
+
+
 
 
 

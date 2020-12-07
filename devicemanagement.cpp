@@ -12,11 +12,9 @@ DeviceManagement::DeviceManagement()
 QString DeviceManagement::getSerialDevice(QString deviceType){
 
 
-static constexpr int TOTALBYTES  = 300;
+    static constexpr int TOTALBYTES  = 300;
 
-
-
-    QString pathStr = "\SYSTEM\\CurrentControlSet\\Services\\disk\\Enum";
+    const QString pathStr = "\SYSTEM\\CurrentControlSet\\Services\\disk\\Enum";
     LPCWSTR pathLPCW = (const wchar_t*) pathStr.utf16();
 
 
@@ -36,7 +34,7 @@ static constexpr int TOTALBYTES  = 300;
 
     DWORD typeB = REG_BINARY;
 
-    QString field = "Count";
+    const QString field = "Count";
     LPCWSTR fieldCountLPCW = (const wchar_t*) field.utf16();
 
 
@@ -56,7 +54,7 @@ static constexpr int TOTALBYTES  = 300;
             if(dwRet == ERROR_SUCCESS){
 
                 QString nameDevice;
-                for(int i =0;i < BufferSize;i++){
+                for(int i =0; i < BufferSize;i++){
                     if(data[i] != NULL)
                         nameDevice += data[i];
                 }
@@ -78,7 +76,6 @@ static constexpr int TOTALBYTES  = 300;
 
 
             }
-
 
         }
 

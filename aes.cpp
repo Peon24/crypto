@@ -168,13 +168,9 @@ constexpr  uint8_t GALOIS14 [256] =
 
 
 AES::AES()
-
 {         
-
     m_gen.seed(time(0));
 }
-
-
 
 void  AES::getPointersToLock(QMap<uint8_t*,size_t>& ptrsForLock){
 
@@ -184,7 +180,6 @@ void  AES::getPointersToLock(QMap<uint8_t*,size_t>& ptrsForLock){
     ptrsForLock.insert(*m_roundKey,blockSize);
 
 }
-
 
 
 bool AES::convertToKeyUInt8(QByteArray &key){
@@ -215,58 +210,6 @@ bool AES::convertToKeyUInt8(QByteArray &key){
     }
 
     return false;
-}
-
-
-int  AES::checkKey(const QString &key){
-
-    bool isContainUpper = false;
-    bool isContainLower = false;
-    bool isContainNumber = false;
-
-    if(key != nullptr){
-
-        if(key.length() > 7 || key.length() > 30){
-
-            for(int i = 0; i < key.length(); i++ ) {
-
-                if(key[i] == key[i].toUpper()){
-                    isContainUpper = true;
-                }
-                if(key[i] == key[i].toLower()) {
-                    isContainLower = true;
-                }
-                 bool ok;
-                if(key[i].isDigit()){
-                isContainNumber = true;
-                }
-
-            }
-
-            if(!isContainUpper ){
-                return 2;
-            }
-
-            if(!isContainNumber){
-                return 3;
-            }
-
-
-            if(!isContainLower){
-                return 4;
-            }
-
-
-        } else {
-            return 1;
-        }
-
-
-    } else{
-        return 1;
-    }
-
-    return 0;
 }
 
 
@@ -320,13 +263,119 @@ void AES::convertAndSetIV(QByteArray &IV){
 
 QString AES::generateKey() {
 
-    //generate str
+    std::default_random_engine generator;
+
+    std::mt19937 m_gen;
+     m_gen.seed(time(0));
+
+    std::uniform_int_distribution<uint8_t> randValue(0,255);
+    QString key;
+
+    for(int j = 0; j < 16; j++){
+
+            uint8_t num = randValue(m_gen);
+
+            key += num;
+      }
+
+    int statusKey = 1;
+
+    while(statusKey != 0){
+
+     statusKey = checkKey(key);
+
+     switch (statusKey) {
+
+     case 0: {
+
+         return key;
+     }
+        break;
+
+
+      case 2: {
+         std::uniform_int_distribution<uint8_t> randPos(0,15);
+         uint8_t pos = randPos(m_gen);
+
+         key[pos] = key[pos].toUpper();
+
+         int counterLenght = 0;
+
+         while(key[pos].isLower() == key[pos].toUpper()){
+
+             if(counterLenght == 16){
+                 return ""; // значит ни один символ не перевелся
+                 break;
+             }
+
+
+             if(pos != 15){
+                 pos++;
+                 counterLenght++;
+             } else {
+               pos = 0;
+               counterLenght++;
+             }
+
+            key[pos] = key[pos].toUpper();
+         }
+
+       }
+         break;
+
+      case 3: {
+         std::uniform_int_distribution<uint8_t> randPos(0,15);
+         std::uniform_int_distribution<uint8_t> number(48,57);
+         uint8_t pos = randPos(m_gen);
+
+          uint8_t value = number(m_gen);
+
+          key[pos] = value;
+
+
+     }
+
+         break;
+
+      case 4:{
+
+         std::uniform_int_distribution<uint8_t> randPos(0,15);
+         uint8_t pos = randPos(m_gen);
+
+         key[pos] = key[pos].toLower();
+
+         int counterLenght = 0;
+
+         while(key[pos].isUpper() != key[pos].toLower()){
+
+             if(counterLenght == 16){
+                 return ""; // значит ни один символ не перевелся
+                 break;
+             }
+
+
+             if(pos != 15){
+                 pos++;
+                 counterLenght++;
+             } else {
+               pos = 0;
+               counterLenght++;
+             }
+
+            key[pos] = key[pos].toLower();
+         }
+     }
+         break;
+     }
+
+
+    }
+
+   return key;
 
 }
 
 void AES::newFile(uint8_t IV[16],bool encrypt) {
-
-
 
     if(encrypt){
         generateInitialVec();
@@ -346,9 +395,7 @@ void AES::newFile(uint8_t IV[16],bool encrypt) {
         {
             for (uint8_t j = 0; j < 4; j++)
             {
-
-                m_prevState[j][i] = IV[(i * 4) + j];
-
+               m_prevState[j][i] = IV[(i * 4) + j];
             }
         }
     }
@@ -373,34 +420,81 @@ void AES::StateXorPrevState(uint8_t state[4][4]){
 void AES::generateInitialVec()  {
 
     std::default_random_engine generator;
-
     std::uniform_int_distribution<int> lenghtRand(1, 6);
 
     QString valueStr;
-
     for(int j = 0; j < 4; j++){
 
         for(int k = 0; k<4; k++){
 
             QString valueStr;
             int lenghtNum = lenghtRand(m_gen);
+
             for(int i = 0; i <= lenghtNum; i++){
 
                 std::uniform_int_distribution<int> valueRand(0, 1);
                 valueStr += QString::number(valueRand(m_gen));
             }
-
-            m_prevState[j][k] = valueStr.toUInt();
+               m_prevState[j][k] = valueStr.toUInt();
         }
+      }
+}
+
+
+int  AES::checkKey(const QString &key){
+
+    bool isContainUpper = false;
+    bool isContainLower = false;
+    bool isContainNumber = false;
+
+    if(key != nullptr){
+
+        if(key.length() > 7 || key.length() > 30){
+
+            for(int i = 0; i < key.length(); i++ ) {
+
+                if(key[i] == key[i].toUpper() && !key[i].isDigit()){
+                    isContainUpper = true;
+                }
+                if(key[i] == key[i].toLower() && !key[i].isDigit()) {
+                    isContainLower = true;
+                }
+                if(key[i].isDigit()){
+                    isContainNumber = true;
+                }
+
+            }
+
+            if(!isContainUpper ){
+                return 2;
+            }
+
+            if(!isContainNumber){
+                return 3;
+            }
+
+
+            if(!isContainLower){
+                return 4;
+            }
+
+
+        } else {
+            return 1;
+        }
+
+
+    } else{
+        return 5;
     }
 
-
+    return 0;
 }
+
 
 void AES::encrypt(uint8_t state[4][4], uint8_t output[] )  {
 
-
-    //StateXorPrevState(state);
+    StateXorPrevState(state);
 
 
     for(int i = 0;i < 4;i++){
@@ -412,8 +506,7 @@ void AES::encrypt(uint8_t state[4][4], uint8_t output[] )  {
 
     }
 
-
-    AddRoundKey(state,m_roundKey); //раунд инициализации
+    AddRoundKey(state,m_roundKey);
 
     for(int round = 1 ;round <= ROUND_MAX ; round++){
 
@@ -466,16 +559,14 @@ void AES::KeyExpansion() {
     int keyIterator = INITIAL_KEY_LENGTH;
 
     std::fill(m_wKey, m_wKey+EXPANDED_KEY_LENGTH, 0);
-    //memset(m_wKey, 0, EXPANDED_KEY_LENGTH); // not good
-
     std::copy(m_key, m_key+INITIAL_KEY_LENGTH, m_wKey);
-    //  memcpy(m_wKey, m_key, INITIAL_KEY_LENGTH);
+
 
     for(int i = 0; i < 10; i++){
 
         //получаем последние 4 байта
         uint8_t lastColumn[4];
-        // memcpy(lastByte, m_wKey + (keyIterator - 4), 4);
+
         std::copy(m_wKey + (keyIterator - 4), m_wKey + keyIterator  , lastColumn);
 
         //замена
@@ -493,33 +584,27 @@ void AES::KeyExpansion() {
                 if (column == 0){
                     if(j == 0 ){
 
-
                         m_wKey[keyIterator] = m_wKey[keyIterator - blockSize] ^ lastColumn[j] ^ RCON[j];
                         keyIterator++;
-
                     }
                     else {
-
                         m_wKey[keyIterator ] = m_wKey[keyIterator - blockSize] ^ lastColumn[j] ^ 0;
                         keyIterator++;
 
                     }
                 }
                 else {
-                    // wKey[keyIterator + j + 1] = wKey[keyIterator - blockSize + column] ^ lastByte[j];
                     m_wKey[keyIterator] = m_wKey[keyIterator - blockSize] ^ lastColumn[j];
-
                     keyIterator++;
                 }
 
             }
 
-            //memcpy(lastColumn, m_wKey + (keyIterator - 4), 4);
             std::copy(m_wKey + (keyIterator - 4), m_wKey + keyIterator  , lastColumn);
-        } // конец колонн
+        }
 
 
-    } // конец раундов
+    }
 }
 
 void AES::ShiftRows(uint8_t state[4][4])  {
@@ -598,31 +683,18 @@ void AES::AddRoundKey(uint8_t state[4][4], uint8_t roundKey[4][4]) {
 
 void AES::decrypt(uint8_t (*state)[4], uint8_t *output){
 
-
    static bool isFirstState = true;
 
-   if(!isFirstState){
-    for (uint8_t i = 0; i < 4; i++)
-    {
-        for (uint8_t j = 0; j < 4; j++)
-        {
-            m_prevState[i][j] = state[i][j];
-
-        }
-    }
-   } else {
           for(int i = 0;i < 4;i++){
               for(int j =0; j<4;j++){
 
-                 buffer[i][j] = state[i][j]; // сохраним стейт сюда, чтобы не перезаписать IV
+                 buffer[i][j] = state[i][j];
 
               }
           }
-   }
 
 
-
-
+    //заполняем раундовый ключ с конца расширенного ключа
     for(int i = 0;i < 4;i++){
         for(int j =0; j<4;j++){
 
@@ -632,15 +704,11 @@ void AES::decrypt(uint8_t (*state)[4], uint8_t *output){
 
     }
 
-
-
     AddRoundKey(state,m_roundKey); //INITIAL ROUND
     invShiftRows(state);
     invSubBytes(state);
 
     for(int round = ROUND_MAX-1  ; round > 0; round--){  // 10 ROUNDS
-
-
 
         for (uint8_t i = 0; i < 4; i++)
         {
@@ -672,11 +740,9 @@ void AES::decrypt(uint8_t (*state)[4], uint8_t *output){
 
     AddRoundKey(state,m_roundKey);
 
+    StateXorPrevState(state);
 
 
-  //  StateXorPrevState(state);
-
-    if(isFirstState){
      for (uint8_t i = 0; i < 4; i++)
      {
          for (uint8_t j = 0; j < 4; j++)
@@ -684,11 +750,21 @@ void AES::decrypt(uint8_t (*state)[4], uint8_t *output){
              m_prevState[i][j] = buffer[i][j];
 
          }
-     }
-    }
+
+//    } else {
+//            for (uint8_t i = 0; i < 4; i++)
+//            {
+//                for (uint8_t j = 0; j < 4; j++)
+//                {
+//                    m_prevState[i][j] = state[i][j];
+
+//                }
+//            }
+
+
+//    }
 
     isFirstState = false;
-
 
     for (uint8_t i = 0; i < 4; i++)
     {
@@ -699,6 +775,7 @@ void AES::decrypt(uint8_t (*state)[4], uint8_t *output){
         }
     }
 
+}
 }
 
 
@@ -715,10 +792,7 @@ void AES::invSubBytes(uint8_t state[4][4])
 
 void AES::invShiftRows(uint8_t state[4][4])  {
 
-
     uint8_t t;
-
-
     t = state[1][3];
     state[1][3] = state[1][2];
     state[1][2] = state[1][1];
@@ -737,7 +811,6 @@ void AES::invShiftRows(uint8_t state[4][4])  {
     state[3][0] = state[3][1];
     state[3][1] = state[3][2];
     state[3][2] = t;
-
 
 }
 

@@ -7,8 +7,6 @@
 #include <ctime>
 #include "memorymanager.h"
 
-
-
 constexpr uint8_t blockSize = 16;
 
 class AES
@@ -20,18 +18,16 @@ public:
 
     ~AES() = default;
 
+    void newFile(uint8_t IV[16],bool encrypt);
     void encrypt(uint8_t state[4][4],  uint8_t output[]);
     void decrypt( uint8_t state[4][4],  uint8_t output[]);
 
-    void newFile(uint8_t IV[16],bool encrypt);
-
-
-
     bool setKey(QByteArray &key);
-    static int checkKey( const QString &key);
-    QString generateKey();
-    void convertAndSetIV(QByteArray &IV);
 
+    static int checkKey( const QString &key);
+    static QString generateKey();
+
+    void convertAndSetIV(QByteArray &IV);
 
     void  getPointersToLock(QMap<uint8_t*,size_t>& ptrsForLock);
 
@@ -41,7 +37,7 @@ public:
 
 private:
 
-    QMap<uint8_t*,size_t> m_ptrsForLock;
+    QMap<uint8_t*,size_t> m_ptrsForLock; //все что может выдать ключ
 
     bool convertToKeyUInt8(QByteArray &input);
 

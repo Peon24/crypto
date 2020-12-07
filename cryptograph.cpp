@@ -4,7 +4,6 @@
 Cryptograph::Cryptograph(QByteArray &key , QByteArray &IV , QString encryptionType)
 {
 
-
     if(encryptionType == "AES"){
 
         if(aes.setKey(key)){
@@ -30,7 +29,7 @@ Cryptograph::~Cryptograph()
 
 
 int Cryptograph::checkKey( const QString &key){
-   return AES::checkKey(key);
+    return AES::checkKey(key);
 }
 
 
@@ -44,7 +43,6 @@ int Cryptograph::start(QString path, bool encrypt, size_t sizeFile , bool needIV
         return 1;
     }
 
-
     bool isNewFile = true;
 
     QByteArray output;
@@ -54,7 +52,7 @@ int Cryptograph::start(QString path, bool encrypt, size_t sizeFile , bool needIV
 
         QByteArray byteArray;
 
-        byteArray = file.read(16000000); //16 mb
+        FileManager::getData(file,path,byteArray);
 
 
         if(encrypt){
@@ -63,11 +61,11 @@ int Cryptograph::start(QString path, bool encrypt, size_t sizeFile , bool needIV
                 isNewFile = !isNewFile;
             }
 
-             encryptFileAES(byteArray,output,isNewFile);
+            encryptFileAES(byteArray,output,isNewFile);
 
-             if(file.atEnd()) {
-                 writeNeedDelete(output,sizeFile);
-             }
+            if(file.atEnd()) {
+                writeNeedDelete(output,sizeFile);
+            }
 
 
             isNewFile = !isNewFile;
@@ -82,35 +80,25 @@ int Cryptograph::start(QString path, bool encrypt, size_t sizeFile , bool needIV
 
     }
 
+    FileManager::replaceFile(file,output);
 
-    file.resize(0);
-
-    file.write(output);
-
-    file.close();
 
     return 0;
 
-    // FileManager::replaceFile(path , output );
-
 }
-
-
-
 
 void Cryptograph::writeNeedDelete(QByteArray& input , size_t size){
 
 
-    uint8_t countDeleteNull = size % blockSize;
+    uint8_t countDeleteNull = 16 - ( size % blockSize );
 
-    if(countDeleteNull > 0)
-      input.append( countDeleteNull);
+    input.append(countDeleteNull);
 
 }
 
 QString Cryptograph::keyGen(){
 
-    return aes.generateKey();
+    return AES::generateKey();
 }
 
 
@@ -121,6 +109,8 @@ void Cryptograph::encryptFileAES(QByteArray& input , QByteArray& output , bool i
 
     int counterState = std::ceil((float)input.size() / 16);
     int inputIterator = 0;
+
+    int y = input.size();
 
 
     uint8_t encryptedState[blockSize] = { 0 };
@@ -133,8 +123,6 @@ void Cryptograph::encryptFileAES(QByteArray& input , QByteArray& output , bool i
         }
 
     }
-
-
 
     for (int i = 1; i <= counterState; i++) {
 
@@ -151,17 +139,16 @@ void Cryptograph::encryptFileAES(QByteArray& input , QByteArray& output , bool i
                 } else{
 
                     state[j][k] = 0; // здесь нужно добавить что то в блок  , чтобы стало ровно 16 байт
+                    //возможно нужно  воровать у прошлого блока кусок
 
                 }
 
             }
         }
 
-
         std::fill(encryptedState, encryptedState + 16, 0);
 
         aes.encrypt(state,encryptedState );
-
 
         for(int j = 0; j < 16; j++ ){
             //записываем шифованный файл
@@ -173,14 +160,12 @@ void Cryptograph::encryptFileAES(QByteArray& input , QByteArray& output , bool i
 }
 
 
-//___________________Decrypt_________________________
-
-
 void Cryptograph::decryptFileAES(QByteArray &input, QByteArray &output, bool isNewFile){
     //рзделяем на блоки
     int counterState = std::ceil((float)(input.size()-1) / blockSize);
     int inputIterator = 0;
 
+    int y = input.size();
 
     uint8_t encryptedState[blockSize] = { 0 };
 
@@ -198,7 +183,7 @@ void Cryptograph::decryptFileAES(QByteArray &input, QByteArray &output, bool isN
                     IV[(k * 4) + j] = input.at(inputIterator);
                     inputIterator++;
                 } else{
-                    //проблема
+                    //проблема, должно делится ровно
                     break;
                 }
 
@@ -207,10 +192,10 @@ void Cryptograph::decryptFileAES(QByteArray &input, QByteArray &output, bool isN
 
         aes.newFile(IV,false); //добавляем в АЕС вектор инициализации
 
-        counterState--;
+        //counterState--;
     }
 
-    for (int i = 1; i <= counterState; i++) {
+    for (int i = 2; i <= counterState; i++) {
 
         uint8_t state[4][4];
 

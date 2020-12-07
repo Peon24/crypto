@@ -9,15 +9,16 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     setWindowTitle("CryptoFile");
-
     setWindowIcon(QIcon(":/png/ICON_CRYPTO.png"));
 
-    ui->lineDir->setText("C:/Users/FASOL/Desktop/Adobe LC 11/тесттекст");
-    ui->lineKey->setText("BETOFKEY2020");
-
     settings = new Settings(this);
-
     log = new Log(this);
+
+    //для тестирования
+    ui->lineDir->setText("C:/Users/FASOL/Desktop/Adobe LC 11/тесттекст");
+    ui->lineKey->setText("123456789");
+
+
 
 
 }
@@ -25,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     ui->lineKey->setText("XXXXXXXXXXXXXXXXXX");
+
     delete settings;
     delete log;
     delete ui;
@@ -65,11 +67,10 @@ void MainWindow::on_pushButton_2_clicked()
 
     std::unique_ptr<FileManager> fileManager(new FileManager());
 
-    bool copyfile = true;// настройки
-    fileManager->copyFilesDir(ui->lineDir->text() ,copyfile ); // копия файлов , не архив
+    bool copyFile = settings->copy();// настройки
 
+    fileManager->copyFilesDir(ui->lineDir->text() ,copyFile ); // копия файлов , не архив
 
-    //QQueue , QStack - очень сильно не любят умные указатели
     std::queue<std::future<int>> queueTask;
     std::stack<std::unique_ptr<Cryptograph>> stackCrypt;
 
@@ -82,17 +83,18 @@ void MainWindow::on_pushButton_2_clicked()
         stackCrypt.push(std::make_unique<Cryptograph>(key,IV));
         queueTask.push(std::async(std::launch::async,&Cryptograph::start,std::move(stackCrypt.top()),path,encrypt,size ,needIV));
 
-
         itPath++;
 
     }
 
-    //получим статус шифрования каждого файла
+    //получим статус каждого файла
             while(!queueTask.empty()){
                 auto &task = queueTask.front();
                 bool status = task.get();
                 queueTask.pop();
             }
+
+
 
 
             log->stopMovie();
@@ -102,12 +104,6 @@ void MainWindow::on_pushButton_2_clicked()
             ui->status->setText("Дешифровано");
             }
 
-    //1)генерация ключа
-    //2)проверка корректность шифровки\дешифровки , проблема миссклика
-    //3)БАГ c CBC
-    //4)логирование
-    //5)настройки
-    //6)графика
 }
 
 void MainWindow::on_pushButton_clicked()
@@ -124,7 +120,7 @@ void MainWindow::on_pushButton_clicked()
 
 void MainWindow::on_pushButtonKeyGen_clicked()
 {
-    // ui->lineKey->setText(keyGen());
+    ui->lineKey->setText(Cryptograph::keyGen());
 }
 
 void MainWindow::on_pushButtonSettings_clicked()
@@ -135,8 +131,11 @@ void MainWindow::on_pushButtonSettings_clicked()
 
 void MainWindow::on_lineKey_textEdited(const QString &arg1)
 {
-   int status = Cryptograph::checkKey(arg1);
+   if(ui->comboBox->currentIndex() == 1){ // при дешифровании не проверяем ключ
+       return void();
+   }
 
+   int status = Cryptograph::checkKey(arg1);
 
    switch (status)
    {
@@ -147,13 +146,16 @@ void MainWindow::on_lineKey_textEdited(const QString &arg1)
          ui->keyCheck->setText("Слкишком короткий ключ");
          break;
       case 2:
-          ui->keyCheck->setText("Требуется вернхний регистр");
+          ui->keyCheck->setText("Требуется верхний регистр");
           break;
       case 3:
           ui->keyCheck->setText("Требуется цифра");
           break;
       case 4:
         ui->keyCheck->setText("Требуется нижний регистр");
+        break;
+      case 5:
+        ui->keyCheck->setText("Введите ключ");
         break;
 
 

@@ -4,6 +4,10 @@
 #include <QFile>
 #include <QDir>
 #include <QMap>
+#include <windows.h>
+
+#include <QTextStream>
+//#include <algorithm>
 
 
 class FileManager
@@ -12,8 +16,11 @@ public:
     FileManager();
 
     void copyFilesDir(QString path , bool needCopyFiles = false);
-    bool checkFiles();
-   static void replaceFile(QString path , QByteArray& byteArray);
+    static bool checkFiles(size_t sizeFile ,QString path);
+
+   //static HANDLE openFile(QString path);
+   static void getData(QFile &file,QString path,QByteArray &byteArray);
+   static void replaceFile(QFile &file , QByteArray& byteArray);
 
 
     int backupFolder();

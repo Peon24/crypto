@@ -10,13 +10,24 @@ Settings::Settings(QWidget *parent) :
 
    device = new DeviceManagement();
 
-    QSettings settings(ORGANIZATION, APPL);
+   QSettings settings(ORGANIZATION, APPL);
+
+   ui->checkBoxAutoDel->setChecked(settings.value(SETTINGS_AUTO_DEL, false).toBool());
+   ui->checkBoxCopyFile->setChecked(settings.value(SETTINGS_ALL_CHECK, false).toBool());
 }
 
 Settings::~Settings()
 {
     delete device;
     delete ui;
+}
+
+bool Settings::copy(){
+    return ui->checkBoxCopyFile->isChecked();
+}
+
+bool Settings::autoDel(){
+    return ui->checkBoxAutoDel->isChecked();
 }
 
 QString Settings::getSerial(QString deviceType){
@@ -39,18 +50,23 @@ QString Settings::getSerial(QString deviceType){
 
 void Settings::on_pushButtonSave_clicked()
 {
-    // запись в файл конфига
-    //сигнал что нужно обновить конфиг в криптографе
-
 
     QSettings settings(ORGANIZATION, APPL);
 
 
-//    if(ui->checkBoxAutoDel->isChecked()){
-//        settings.setValue(SETTINGS_TRAY, true);
-//    } else {
-//        settings.setValue(SETTINGS_TRAY, false);
-//    }
+    if(ui->checkBoxAutoDel->isChecked()){
+        settings.setValue(SETTINGS_AUTO_DEL, true);
+    } else {
+        settings.setValue(SETTINGS_AUTO_DEL, false);
+    }
+
+    if(ui->checkBoxCopyFile->isChecked()){
+        settings.setValue(SETTINGS_ALL_CHECK, true);
+    } else {
+        settings.setValue(SETTINGS_ALL_CHECK, false);
+    }
+
+
     settings.sync();
 
     this->close();
@@ -97,7 +113,6 @@ void Settings::on_pushButtonAddIO_2_clicked()
          ui->lineEditSerialHDD->setText("");
          return void();
     }
-
 
      ui->lineEditSerialHDD->setText(device->getSerialDevice("SCSI"));
 

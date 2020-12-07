@@ -6,5 +6,14 @@
     <qresource prefix="/png">
         <file>5.png</file>
         <file>ICON_CRYPTO.png</file>
+        <file>enc.jpg</file>
+        <file>enc2.jpg</file>
+        <file>folder.png</file>
+        <file>grand-master-key.png</file>
+        <file>settings.jpg</file>
+        <file>start.png</file>
+        <file>add.jpg</file>
+        <file>ok.png</file>
+        <file>cancel.png</file>
     </qresource>
 </RCC>

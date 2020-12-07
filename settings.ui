@@ -10,6 +10,18 @@
     <height>300</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>400</width>
+    <height>300</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>400</width>
+    <height>300</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>Настройки</string>
   </property>
@@ -18,12 +30,12 @@
     <rect>
      <x>20</x>
      <y>190</y>
-     <width>201</width>
-     <height>20</height>
+     <width>277</width>
+     <height>17</height>
     </rect>
    </property>
    <property name="text">
-    <string>Шифрование с бэкапом</string>
+    <string>Сохранять файлы , в случае ошибки шифрования</string>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButtonAddIO">
@@ -37,6 +49,10 @@
    </property>
    <property name="text">
     <string>Добавить</string>
+   </property>
+   <property name="icon">
+    <iconset resource="Images.qrc">
+     <normaloff>:/png/add.jpg</normaloff>:/png/add.jpg</iconset>
    </property>
   </widget>
   <widget class="QLabel" name="label">
@@ -76,12 +92,16 @@
     <rect>
      <x>200</x>
      <y>260</y>
-     <width>75</width>
+     <width>81</width>
      <height>23</height>
     </rect>
    </property>
    <property name="text">
     <string>Сохранить</string>
+   </property>
+   <property name="icon">
+    <iconset resource="Images.qrc">
+     <normaloff>:/png/ok.png</normaloff>:/png/ok.png</iconset>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButtonCancel">
@@ -96,18 +116,22 @@
    <property name="text">
     <string>Отмена</string>
    </property>
+   <property name="icon">
+    <iconset resource="Images.qrc">
+     <normaloff>:/png/cancel.png</normaloff>:/png/cancel.png</iconset>
+   </property>
   </widget>
   <widget class="QCheckBox" name="checkBoxAutoDel">
    <property name="geometry">
     <rect>
      <x>20</x>
      <y>220</y>
-     <width>321</width>
+     <width>351</width>
      <height>20</height>
     </rect>
    </property>
    <property name="text">
-    <string>Автоматически удалять бэкап файлы</string>
+    <string>Автоматически удалять сохраненные файлы , после проверки</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="lineEditSerialHDD">
@@ -141,6 +165,10 @@
    <property name="text">
     <string>Добавить</string>
    </property>
+   <property name="icon">
+    <iconset resource="Images.qrc">
+     <normaloff>:/png/add.jpg</normaloff>:/png/add.jpg</iconset>
+   </property>
   </widget>
   <widget class="QLabel" name="label_2">
    <property name="geometry">
@@ -169,6 +197,8 @@
    </property>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="Images.qrc"/>
+ </resources>
  <connections/>
 </ui>

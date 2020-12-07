@@ -16,12 +16,14 @@ class Settings : public QDialog
 
 public:
     QString getSerial(QString deviceType);
+     bool copy();
+     bool autoDel();
+
 
 
     static inline const QString ORGANIZATION = "CryptoCorp";
     static inline const QString DOMAIN_APPL = "Crypto";
     static inline const QString APPL = "Crypto";
-
 
     explicit Settings(QWidget *parent = nullptr);
     ~Settings();
@@ -37,9 +39,8 @@ private slots:
 
 private:
 
-     static inline const QString SETTINGS_AUTO_DEL = "settings/auto_delete";
-     static inline const QString SETTINGS_ALL_CHECK = "settings/all_check";
-     static inline const QString SETTINGS_ALL_IV = "settings/all_iv";
+    static inline const QString SETTINGS_AUTO_DEL = "settings/auto_delete";
+    static inline const QString SETTINGS_ALL_CHECK = "settings/all_check";
 
     DeviceManagement* device;
     Ui::settings *ui;

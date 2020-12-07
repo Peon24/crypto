@@ -37,7 +37,7 @@ private slots:
 
 private:
     Settings* settings;
-     Log *log;
+    Log *log;
 
     //Cryptograph* cryptograph;
     Ui::MainWindow *ui;
