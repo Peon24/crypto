@@ -51,8 +51,6 @@ private:
 
     uint8_t buffer[4][4];
 
-    std::mt19937 m_gen;
-
 
     void generateInitialVec();
     void StateXorPrevState(uint8_t state[4][4]);

@@ -14,7 +14,7 @@ public:
 
 private:
 
-QString getSerialFromName(QString fullName);
+    QString getSerialFromName(QString fullName);
 
 };
 

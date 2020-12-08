@@ -28,8 +28,6 @@ public:
 
 private :
 
-
-
    QMap<uint8_t*,size_t>  m_lockPtrs;
 
 };

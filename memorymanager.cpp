@@ -21,7 +21,7 @@ QMap<uint8_t*,size_t>& MemoryManager::getLockPtrs(){
 
 void MemoryManager::lockMemory(uint8_t *beginMemory, SIZE_T size){
 
-   WINAPI::VirtualLock(beginMemory,size); //протестировать
+   WINAPI::VirtualLock(beginMemory,size);
 
    m_lockPtrs.insert(beginMemory,size);
 
@@ -65,39 +65,6 @@ void MemoryManager::clearAll(){
 
 
 
-
-
-
-//bool MemoryManager::rezerveMemory(uint8_t *beginMemory,SIZE_T size, QString pageType){
-
-
-//    DWORD pageProtect;
-
-//    if(pageType == "READONLY"){
-//        pageProtect = PAGE_READONLY;
-//    } else {
-//        pageProtect = PAGE_READWRITE;
-//    }
-
-
-//    if( WINAPI::VirtualAlloc(beginMemory,size,MEM_RESERVE,pageProtect)){
-//        return true;
-
-//    }
-
-//    return false;
-
-//}
-
-
-//MemoryManager& MemoryManager::getInstance()
-//{
-
-//        static MemoryManager memoryManager;
-
-//        return memoryManager;
-
-//}
 
 
 

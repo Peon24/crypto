@@ -17,8 +17,8 @@
 class Cryptograph
 {
 public:
-   explicit Cryptograph( QByteArray &key ,QByteArray &IV,QString encryptionType = "AES");
-   Cryptograph() = delete;
+    explicit Cryptograph( QByteArray &key ,QByteArray &IV,QString encryptionType = "AES");
+    Cryptograph() = delete;
 
     int start(QString path,  bool encrypt ,  size_t sizeFile  ,bool needIV = true );
 
@@ -35,10 +35,9 @@ private:
     void decryptFileAES(QByteArray& input,QByteArray& output ,bool isNewFile = false);
     void writeNeedDelete(QByteArray& input ,const size_t size);
 
-   AES aes;
+    AES m_aes;
 
-   MemoryManager memoryManager;
-   QString path;
+    MemoryManager m_memoryManager;
 
 };
 

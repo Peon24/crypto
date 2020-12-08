@@ -1,6 +1,5 @@
 #include "aes.h"
-#include <algorithm>
-#include <iterator>
+
 
 constexpr  uint8_t S_BOX [256] =
 {
@@ -169,7 +168,7 @@ constexpr  uint8_t GALOIS14 [256] =
 
 AES::AES()
 {         
-    m_gen.seed(time(0));
+
 }
 
 void  AES::getPointersToLock(QMap<uint8_t*,size_t>& ptrsForLock){
@@ -221,6 +220,8 @@ bool AES::setKey(QByteArray &key){
 
         return true;
 
+    } else{
+       return false;
     }
 
 }
@@ -256,6 +257,18 @@ void AES::convertAndSetIV(QByteArray &IV){
             }
         }
     }
+
+    QString str;
+    for(int i = 0;i<4;i++){
+
+        for (int j = 0; j < 4;j++){
+           str += m_prevState[i][j];
+        }
+    }
+
+    str = str;
+
+
 }
 
 
@@ -418,7 +431,8 @@ void AES::StateXorPrevState(uint8_t state[4][4]){
 }
 
 void AES::generateInitialVec()  {
-
+    std::mt19937 m_gen;
+    m_gen.seed(time(0));
     std::default_random_engine generator;
     std::uniform_int_distribution<int> lenghtRand(1, 6);
 
@@ -495,7 +509,6 @@ int  AES::checkKey(const QString &key){
 void AES::encrypt(uint8_t state[4][4], uint8_t output[] )  {
 
     StateXorPrevState(state);
-
 
     for(int i = 0;i < 4;i++){
         for(int j =0; j<4;j++){
@@ -683,8 +696,6 @@ void AES::AddRoundKey(uint8_t state[4][4], uint8_t roundKey[4][4]) {
 
 void AES::decrypt(uint8_t (*state)[4], uint8_t *output){
 
-   static bool isFirstState = true;
-
           for(int i = 0;i < 4;i++){
               for(int j =0; j<4;j++){
 
@@ -750,21 +761,6 @@ void AES::decrypt(uint8_t (*state)[4], uint8_t *output){
              m_prevState[i][j] = buffer[i][j];
 
          }
-
-//    } else {
-//            for (uint8_t i = 0; i < 4; i++)
-//            {
-//                for (uint8_t j = 0; j < 4; j++)
-//                {
-//                    m_prevState[i][j] = state[i][j];
-
-//                }
-//            }
-
-
-//    }
-
-    isFirstState = false;
 
     for (uint8_t i = 0; i < 4; i++)
     {

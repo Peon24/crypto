@@ -14,13 +14,6 @@ MainWindow::MainWindow(QWidget *parent)
     settings = new Settings(this);
     log = new Log(this);
 
-    //для тестирования
-    ui->lineDir->setText("C:/Users/FASOL/Desktop/Adobe LC 11/тесттекст");
-    ui->lineKey->setText("123456789");
-
-
-
-
 }
 
 MainWindow::~MainWindow()
@@ -36,8 +29,11 @@ MainWindow::~MainWindow()
 void MainWindow::on_pushButton_2_clicked()
 
 {
-
     log->startMovie();
+
+    if(Cryptograph::checkKey(ui->lineKey->text()) != 0){
+        ui->status->setText("Ключ слишком простой");
+    }
 
     QByteArray key = ui->lineKey->text().toUtf8();
 
@@ -93,8 +89,6 @@ void MainWindow::on_pushButton_2_clicked()
                 bool status = task.get();
                 queueTask.pop();
             }
-
-
 
 
             log->stopMovie();

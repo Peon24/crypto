@@ -2,14 +2,14 @@
 
 FileManager::FileManager()
 {
-    totalSize = 0;
+totalSize = 0;
 }
 
 
 
-void FileManager::getData(QFile &file,QString path,QByteArray &byteArray){
+void FileManager::getData(QFile &file,QByteArray &byteArray){
 
-           byteArray = file.read(16000000); //16 mb
+    byteArray = file.read(16000000); //16 mb
 
 }
 
@@ -17,28 +17,25 @@ bool FileManager::checkFiles(size_t size,QString path){
 
     std::reverse(path.begin(), path.end());
 
-     QString fileName;
-     for(int i = 0; i < path.length();i++){
-     if(path[i] == QDir::separator()) {
-     break;
-     }
-     fileName += path[i];
-     }
+    QString fileName;
+    for(int i = 0; i < path.length();i++){
+        if(path[i] == QDir::separator()) {
+            break;
+        }
+        fileName += path[i];
+    }
 
-     QString pathBackup = QDir::currentPath() + QDir::separator() + "/backup";
-     pathBackup += QDir::separator() + fileName;
+    QString pathBackup = QDir::currentPath() + QDir::separator() + "/backup";
+    pathBackup += QDir::separator() + fileName;
 
-     size_t sizeBackupFile = QFileInfo(pathBackup).size(); // получили размер сохраненного файла
-
-
-      if (sizeBackupFile == size){
-          return true;
-      }else{
-          return false;
-      }
+    size_t sizeBackupFile = QFileInfo(pathBackup).size(); // получили размер сохраненного файла
 
 
-
+    if (sizeBackupFile == size){
+        return true;
+    }else{
+        return false;
+    }
 
 }
 

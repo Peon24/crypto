@@ -6,15 +6,14 @@ Cryptograph::Cryptograph(QByteArray &key , QByteArray &IV , QString encryptionTy
 
     if(encryptionType == "AES"){
 
-        if(aes.setKey(key)){
+        if(m_aes.setKey(key)){
 
             if(IV.size() > 0){
-                aes.convertAndSetIV(IV);
+                m_aes.convertAndSetIV(IV);
             }
 
-            aes.getPointersToLock(memoryManager.getLockPtrs());
-            memoryManager.lockAll();
-
+            m_aes.getPointersToLock(m_memoryManager.getLockPtrs());
+            m_memoryManager.lockAll();
 
         }
     }
@@ -52,8 +51,7 @@ int Cryptograph::start(QString path, bool encrypt, size_t sizeFile , bool needIV
 
         QByteArray byteArray;
 
-        FileManager::getData(file,path,byteArray);
-
+        FileManager::getData(file,byteArray);
 
         if(encrypt){
 
@@ -67,10 +65,13 @@ int Cryptograph::start(QString path, bool encrypt, size_t sizeFile , bool needIV
                 writeNeedDelete(output,sizeFile);
             }
 
-
             isNewFile = !isNewFile;
         }
         else {
+
+            if(!needIV){ // если есть вектор , то не нужно записывать и генерировать , для шифрования
+                isNewFile = !isNewFile;
+            }
 
             decryptFileAES(byteArray,output,isNewFile);
 
@@ -82,13 +83,11 @@ int Cryptograph::start(QString path, bool encrypt, size_t sizeFile , bool needIV
 
     FileManager::replaceFile(file,output);
 
-
     return 0;
 
 }
 
 void Cryptograph::writeNeedDelete(QByteArray& input , size_t size){
-
 
     uint8_t countDeleteNull = 16 - ( size % blockSize );
 
@@ -110,13 +109,10 @@ void Cryptograph::encryptFileAES(QByteArray& input , QByteArray& output , bool i
     int counterState = std::ceil((float)input.size() / 16);
     int inputIterator = 0;
 
-    int y = input.size();
-
-
     uint8_t encryptedState[blockSize] = { 0 };
 
     if(isNewFile){
-        aes.newFile(encryptedState,true);
+        m_aes.newFile(encryptedState,true);
 
         for(int j = 0; j < 16; j++ ){
             output.append(encryptedState[j]);
@@ -148,7 +144,7 @@ void Cryptograph::encryptFileAES(QByteArray& input , QByteArray& output , bool i
 
         std::fill(encryptedState, encryptedState + 16, 0);
 
-        aes.encrypt(state,encryptedState );
+        m_aes.encrypt(state,encryptedState );
 
         for(int j = 0; j < 16; j++ ){
             //записываем шифованный файл
@@ -164,8 +160,6 @@ void Cryptograph::decryptFileAES(QByteArray &input, QByteArray &output, bool isN
     //рзделяем на блоки
     int counterState = std::ceil((float)(input.size()-1) / blockSize);
     int inputIterator = 0;
-
-    int y = input.size();
 
     uint8_t encryptedState[blockSize] = { 0 };
 
@@ -190,9 +184,17 @@ void Cryptograph::decryptFileAES(QByteArray &input, QByteArray &output, bool isN
             }
         }
 
-        aes.newFile(IV,false); //добавляем в АЕС вектор инициализации
+        QString str;
+        for(int i = 0;i<16;i++){
 
-        //counterState--;
+               str += IV[i];
+
+        }
+
+        str = str;
+
+        m_aes.newFile(IV,false); //добавляем в АЕС вектор инициализации
+
     }
 
     for (int i = 2; i <= counterState; i++) {
@@ -218,7 +220,7 @@ void Cryptograph::decryptFileAES(QByteArray &input, QByteArray &output, bool isN
 
         std::fill(encryptedState, encryptedState + blockSize, 0);
 
-        aes.decrypt(state,encryptedState );
+        m_aes.decrypt(state,encryptedState );
 
         if(i!= counterState){
             for(int j = 0; j < 16; j++ ){
